@@ -1,0 +1,6 @@
+requests==0.7.4
+lxml==2.3.1
+
+# dev requirements
+# ipython
+# nose==1.1.2
