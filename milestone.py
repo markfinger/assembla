@@ -1,4 +1,2 @@
-from .common import AssemblaObject
+from base_models import AssemblaObject, HasTickets, HasUsers
 
-class Milestone(AssemblaObject):
-    pass

@@ -6,7 +6,7 @@ from django.template.defaultfilters import slugify
 import requests
 from lxml import etree
 
-from .models import *
+from ._models import *
 from tests import auth
 
 

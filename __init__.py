@@ -1,4 +1,4 @@
-from .common import AssemblaObject, AssemblaError
+from .base_models import AssemblaObject, AssemblaError
 
 class API(AssemblaObject):
 
