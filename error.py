@@ -5,14 +5,14 @@ class AssemblaError(Exception):
 
     error_codes = {
         100: "No authorisation credentials provided",
-        110: "Assembla failed to authorised with credentials",
-        200: "Object with a matching primary key cannot be found. pk: {pk}"
+        110: "Assembla failed to authorise with credentials",
+        200: "Cannot find '{object}' with a primary key matching '{pk}'",
+        210: "Multiple instances of '{object}' found with primary keys matching '{pk}'",
     }
 
-    def __init__(self, code, *args, **kwargs):
+    def __init__(self, code=None, *args, **kwargs):
         self.code = code
-        import pdb; pdb.set_trace
-        raise self
+        self.error_message = self.error_codes[self.code].format(**kwargs)
 
     def __str__(self):
-        return self.error_codes[self.code]
+        return self.error_message

@@ -1,6 +1,8 @@
 from functools import partial
 from error import AssemblaError
 
+__data__ = {}
+
 class AssemblaObject(object):
     """
     Base object
@@ -16,17 +18,17 @@ class APIObject(AssemblaObject):
         # A string denoting the key identifier for the model
         primary_key = None
         # Python formattable string, which denotes a relative path to
-        # the model's HTML page on Assembla.
+        # the model's HTML page on Assembla
         relative_url = None
         # Python formattable string, which denotes a relative path to
         # the model on Assembla's API. This is an optional field, only necessary if
-        # the API requires a different access path than the HTML front-end.
+        # the API requires a different access path than the HTML front-end
         relative_api_url = None
         # A URL which is prepended to all relative URLs to generate absolute
-        # URLs to HTML pages.
+        # URLs to HTML pages
         base_url = 'https://www.assembla.com/'
         # A URL which is prepended to all relative URLs to generate absolute
-        # URLs to API links.
+        # URLs to API links
         base_api_url = base_url
 
     def __str__(self):
@@ -75,7 +77,7 @@ class APIObject(AssemblaObject):
         Assembla's API
         """
         return self._url(
-            # If the URL for the API is defined, use it.
+            # If the URL for the API is defined, use it
             relative_url=self.Meta.relative_api_url or None
         )
 
@@ -97,8 +99,8 @@ class APIObject(AssemblaObject):
             # Get the primary key function
             'pk',
             # In case we are getting back None, wrap it up in a lambda so we
-            # can safely call .pk()
-            lambda: default or None
+            # can safely call the result
+            lambda: default
         )() # Need to execute either .pk or the lambda
 
 class HasObjects(object):
@@ -115,11 +117,6 @@ class HasObjects(object):
             for the matching object
 
     """
-
-#    could probably do some automated stuff to avoid all
-#    the boilerplate below
-
-    # has_harvested_<name> = False
     def __init__(self):
         for object_type in self.Meta.has_objects:
             # Add a list to the model, this will store the
@@ -129,43 +126,80 @@ class HasObjects(object):
             object_list_name = '_{0}s'.format(object_type)
             object_list = []
             setattr(self, object_list_name, object_list)
-            # Adds a function which proxies to __objects.
-            objects_func_name = '{0}s'.format(object_type)
-            objects_func = partial(self.__objects, object_list_name=object_list_name)
-            setattr(self, objects_func_name, objects_func)
-            # Adds a function which proxies to __object.
-            object_func_name = '{0}'.format(object_type)
-            object_func = partial(self.__object, objects_func_name=objects_func_name)
-            setattr(self, object_func_name, object_func)
 
-    def __object(self, objects_func_name, pk):
+            # Adds a function which proxies to __get_objects
+            name_of_proxy_to_get_objects = '{0}s'.format(object_type)
+            proxy_to_get_objects = partial(
+                self.__get_objects,
+                object_list_name=object_list_name
+            )
+            setattr(
+                self,
+                name_of_proxy_to_get_objects,
+                proxy_to_get_objects
+            )
+
+            # Adds a function which proxies to __get_object_by_pk
+            name_of_proxy_to_get_object_by_pk = '{0}'.format(object_type)
+            proxy_to_get_object_by_pk = partial(
+                self.__get_object_by_pk, 
+                name_of_proxy_to_get_objects=name_of_proxy_to_get_objects
+            )
+            setattr(
+                self, 
+                name_of_proxy_to_get_object_by_pk,
+                proxy_to_get_object_by_pk
+            )
+            setattr(
+                self,
+                '__data__',
+                __data__
+            )
+
+    def __add_object(self, objects_func_name, pk):
+        """
+        Might need this to bubble up to the space's store.
+
+        maybe use a __data attr for the API which contains pks pointing to data
+        eg:
+        API.__spaces = {
+            '<space_pk_1>':
+                'milestones': {
+                    '<pk_1>': <milestone_1>,
+                    '<pk_2>': <milestone_2>,
+                    ...
+                    '<pk_x>': <milestone_x>,
+                },
+                'tickets' : {
+                    ...
+                },
+                ...
+        }
+        """
+        pass
+
+    def __get_object_by_pk(self, objects_func_name, pk):
+        """
+        gets __get_objects and filters for the pk
+        """
         results = filter(
             lambda object: object.pk()==pk,
-            getattr(self, objects_func_name)(), # Call __objects
+            getattr(self, objects_func_name)(), # Call the proxy to __get_objects
         )
-        if not results:
-            raise AssemblaError(200, pk) # Not found
-        elif len(results) > 1:
-            raise AssemblaError(210, pk) # Too many results
-        else:
+        if not results: # Not found
+            raise AssemblaError(200, object=objects_func_name, pk=pk)
+        elif len(results) > 1: # Too many results
+            raise AssemblaError(210, object=objects_func_name, pk=pk)
+        else: # Found a singleton with corresponding pk
             return results[0]
 
-    def __objects(self, object_list_name):
+    def __get_objects(self, object_list_name):
+        """
+        retrieves the list of objects
+
+        if the objects have not been harvested yet, get them through the API and
+        return,
+        otherwise return them immediately
+        """
         return getattr(self, object_list_name)
-
-#class HasSpaces(HasObjects):
-#
-#    def __init__(self):
-#        self._spaces = []
-#
-#    def space(self, name):
-#        return reduce(
-#            lambda space: space.name==name,
-#            self._spaces
-#        )
-#
-#    def spaces(self):
-#        return self._spaces
-#
-
 

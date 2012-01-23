@@ -3,8 +3,13 @@ from error import AssemblaError
 
 
 class _API(AssemblaObject, HasObjects):
+    __spaces = {
+
+    }
+
     class Meta:
         has_objects = ('space',)
+
     def __init__(self, auth=None):
         super(_API, self).__init__()
         if auth:
