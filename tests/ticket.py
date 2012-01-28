@@ -1,11 +1,12 @@
-from .test import AssemblaTest
 from ..models import Ticket, Space
+from .. import API
+from ..auth import auth
 
-class TestsForTicket(AssemblaTest):
+class TestsForTicket(object):
 
     def setup(self):
-        super(TestsForTicket, self).setup()
         self.ticket = Ticket()
+        self.API = API(auth)
 
     def test_attributes_exist(self):
         # Base class

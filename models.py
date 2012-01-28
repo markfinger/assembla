@@ -2,13 +2,9 @@ from base_models import *
 from error import AssemblaError
 
 
-class _API(APIObject):
-
-    class Meta(APIObject.Meta):
-        pass
-
-    def __init__(self, auth=None):
-        super(_API, self).__init__()
+class API(APIObject):
+    def __init__(self, auth=None, *args, **kwargs):
+        super(API, self).__init__(*args, **kwargs)
         if not auth:
             raise AssemblaError(100)
         self.auth = auth
@@ -23,51 +19,83 @@ class _API(APIObject):
         else:
             return True
 
-    def space(self, id=None, name=None):
-        """
-        Return the space which has an id equal to :id or name equal to :name.
-        """
-        assert id or name # One of the arguments are required
-        return reduce(
-            lambda space: space.id==id or space.name==name,
-            self.spaces(),
-        )
-
     def spaces(self):
-        return self.harvest(
+        raw_data = self._harvest(
             url=Space().list_url(),
-        )
+            )
+        return [
+            Space(
+                auth=self.auth,
+                initialise_with=data[1]
+                ) for data in raw_data
+            ]
 
 
-
-class Space(APIObject):
-    id = None
+class Space(AssemblaObject):
     class Meta(APIObject.Meta):
         primary_key = 'id'
         relative_url = 'spaces/{pk}'
         relative_list_url = 'spaces/my_spaces'
-        has_objects = ('milestone', 'ticket', 'user',)
+
+    def milestones(self):
+        url = Milestone(space=self).list_url()
+        raw_data = self._harvest(url=url)
+        return [
+            Milestone(
+                space=self,
+                initialise_with=data[1]
+                ) for data in raw_data
+            ]
+
+    def tickets(self):
+        url = Ticket(space=self).list_url()
+        raw_data = self._harvest(url=url)
+        return [
+            Ticket(
+                space=self,
+                initialise_with=data[1]
+                ) for data in raw_data
+            ]
+
+    def users(self):
+        url = User(space=self).list_url()
+        raw_data = self._harvest(url=url)
+        return [
+            User(
+                space=self,
+                initialise_with=data[1]
+                ) for data in raw_data
+            ]
 
 
-class Milestone(APIObject):
+class Milestone(AssemblaObject):
     class Meta(APIObject.Meta):
         primary_key = 'id'
         relative_url = 'spaces/{space}/milestones/{pk}'
-        relative_list_url = relative_url
-        has_objects = ('ticket', 'user',)
+        relative_list_url = 'spaces/{space}/milestones'
+
+    def tickets(self):
+        return filter(
+            lambda ticket: ticket.milestone_id == self.id,
+            self.space.tickets(),
+            )
 
 
-class User(APIObject):
+class User(AssemblaObject):
     class Meta(APIObject.Meta):
         primary_key = 'id'
-        # Should test if profiles/{pk} works, this seems a bit weird
-        relative_url = 'user/best_profile/{pk}'
-        relative_list_url = relative_url
-        has_objects = ('ticket',)
+        relative_url = 'profile/{pk}'
+        relative_list_url = 'spaces/{space}/users'
+
+    def tickets(self):
+        return filter(
+            lambda ticket: ticket.assigned_to_id == self.id,
+            self.space.tickets(),
+            )
 
 
-class Ticket(APIObject):
+class Ticket(AssemblaObject):
     class Meta(APIObject.Meta):
         primary_key = 'number'
         relative_url = 'spaces/{space}/tickets/{pk}'
-        relative_list_url = relative_url
+        relative_list_url = 'spaces/{space}/tickets'
