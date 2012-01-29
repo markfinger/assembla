@@ -3,7 +3,7 @@ from datetime import datetime
 
 from .. import API
 from ..models import User, Space, Ticket
-from ..auth import auth
+from .auth import auth
 
 class TestsForUser(object):
 

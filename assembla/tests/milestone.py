@@ -1,8 +1,8 @@
 from datetime import datetime
 from collections import Counter
 from .. import API
+from .auth import auth
 from ..models import Milestone, Space, Ticket
-from ..auth import auth
 
 class TestsForMilestone(object):
 

@@ -1,8 +1,8 @@
 from .. import API
 from datetime import datetime
+from .auth import auth
 from ..models import Space
 from ..error import AssemblaError
-from ..auth import auth
 
 class TestsForAPI(object):
 

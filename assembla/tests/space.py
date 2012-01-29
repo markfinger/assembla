@@ -1,7 +1,7 @@
 from ..models import Space, Milestone, Ticket, User
 from datetime import datetime, date
 from .. import API
-from ..auth import auth
+from .auth import auth
 
 class TestsForSpace(object):
 

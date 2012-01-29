@@ -1,6 +1,6 @@
 from ..models import Ticket, Space
 from .. import API
-from ..auth import auth
+from .auth import auth
 
 class TestsForTicket(object):
 
