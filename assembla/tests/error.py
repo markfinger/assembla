@@ -1,7 +1,6 @@
 from ..error import AssemblaError
-from .test import AssemblaTest
 
-class TestForAssemblaError(AssemblaTest):
+class TestForAssemblaError(object):
     # General usage tests.
 
     def test_assembla_error_can_be_raised(self):

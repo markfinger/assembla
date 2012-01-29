@@ -9,17 +9,14 @@ Typical usage::
 
     import assembla
 
-    API = assembla.API(
-        'Username',
-        'Password',
-        )
+    API = assembla.API(auth=('Username', 'Password',))
 
     # Retrieve your available spaces
     spaces = API.spaces()
 
     # Select a specific space
     space = filter(
-        lambda space: space.name=='My Space',
+        lambda space: space.name=='ASO',
         spaces
         )[0]
 
@@ -40,6 +37,16 @@ Typical usage::
 
     # Retrieve and output the milestone's tickets
     for ticket in milestone.tickets():
+        print(ticket.number, ticket.summary)
+
+    # Select a specific user
+    user = filter(
+        lambda user: user.login_name=='John Smith',
+        users
+        )[0]
+
+    # Retrieve and output the user's tickets
+    for ticket in user.tickets():
         print(ticket.number, ticket.summary)
 
 Source: https://github.com/markfinger/assembla
