@@ -42,6 +42,6 @@ Typical usage::
     for ticket in milestone.tickets():
         print(ticket.number, ticket.summary)
 
-Source: https://github.com/mfinger/assembla
+Source: https://github.com/markfinger/assembla
 
 API Reference: http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API

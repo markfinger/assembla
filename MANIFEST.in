@@ -1,1 +1,2 @@
-include README
+include README.rst
+include assembla/README.rst

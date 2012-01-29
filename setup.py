@@ -35,8 +35,8 @@ setup(
     license = "BSD",
     platforms=['any'],
     keywords = "Assembla API",
-    url = "https://github.com/mfinger/assembla/",
-    long_description = read('README'),
+    url = "https://github.com/markfinger/assembla/",
+    long_description = read('README.rst'),
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
