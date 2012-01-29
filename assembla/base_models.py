@@ -13,6 +13,9 @@ class APIObject(object):
     """
 
     class Meta:
+        """
+        Descriptive fields for models
+        """
         # A string denoting the key identifier for the model
         primary_key = None
         # Python formattable string, which denotes a relative path to
@@ -35,6 +38,9 @@ class APIObject(object):
         return getattr(self, self.Meta.primary_key)
 
     def _safe_pk(self):
+        """
+        Safer variant of .pk()
+        """
         try:
             return self.pk()
         except AttributeError:
@@ -42,7 +48,7 @@ class APIObject(object):
 
     def url(self, base_url=None, relative_url=None, *args, **kwargs):
         """
-        Generates an absolute url to a resource.
+        Generates an absolute url to a model's instance in the API.
         """
         return ''.join([
             base_url or self.Meta.base_url,
@@ -56,6 +62,9 @@ class APIObject(object):
                 })
 
     def list_url(self, *args, **kwargs):
+        """
+        Generates an absolute url to a list of the model's type on the API.
+        """
         return self.url(relative_url=self.Meta.relative_list_url, *args, **kwargs)
 
     def _get_pk_of_attr(self, attr, default=None):

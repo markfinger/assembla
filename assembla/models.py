@@ -4,6 +4,10 @@ from error import AssemblaError
 
 class API(APIObject):
     def __init__(self, auth=None, *args, **kwargs):
+        """
+        :auth is a required argument which should be in the format:
+            `('Username', 'Password',)`
+        """
         super(API, self).__init__(*args, **kwargs)
         if not auth:
             raise AssemblaError(100)
@@ -20,6 +24,10 @@ class API(APIObject):
             return True
 
     def spaces(self):
+        """
+        Return the spaces available to the user, each space is instantiated as
+        a Space
+        """
         raw_data = self._harvest(
             url=Space().list_url(),
             )
@@ -38,6 +46,9 @@ class Space(AssemblaObject):
         relative_list_url = 'spaces/my_spaces'
 
     def milestones(self):
+        """
+        Return the milestones in the space
+        """
         url = Milestone(space=self).list_url()
         raw_data = self._harvest(url=url)
         return [
@@ -48,6 +59,9 @@ class Space(AssemblaObject):
             ]
 
     def tickets(self):
+        """
+        Return the tickets in the space
+        """
         url = Ticket(space=self).list_url()
         raw_data = self._harvest(url=url)
         return [
@@ -58,6 +72,9 @@ class Space(AssemblaObject):
             ]
 
     def users(self):
+        """
+        Return the users in the space
+        """
         url = User(space=self).list_url()
         raw_data = self._harvest(url=url)
         return [
@@ -75,6 +92,9 @@ class Milestone(AssemblaObject):
         relative_list_url = 'spaces/{space}/milestones'
 
     def tickets(self):
+        """
+        Return the tickets in the milestone
+        """
         return filter(
             lambda ticket: ticket.milestone_id == self.id,
             self.space.tickets(),
@@ -88,6 +108,9 @@ class User(AssemblaObject):
         relative_list_url = 'spaces/{space}/users'
 
     def tickets(self):
+        """
+        Return the tickets in the space which are assigned to the user
+        """
         return filter(
             lambda ticket: ticket.assigned_to_id == self.id,
             self.space.tickets(),
