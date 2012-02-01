@@ -40,7 +40,8 @@ class APIObject(object):
 
     def _safe_pk(self):
         """
-        Safer variant of .pk()
+        Safer variant of self.pk(). Care should be used, as it suppresses
+        errors.
         """
         try:
             return self.pk()
@@ -76,8 +77,12 @@ class APIObject(object):
         Takes an optional argument :default, which acts in a similar manner
         to getattr's.
 
-        Example: self._get_pk('space') attempts to return the primary key of the
-        space attribute; equivalent to self.space.pk.
+        Ex:
+            ```
+            self._get_pk('space')
+            ```
+            attempts to return the primary key of the space attribute;
+            equivalent to self.space.pk.
         """
         return getattr(
             # Get the attribute specified by :attr
@@ -187,18 +192,26 @@ class APIObject(object):
 
 class AssemblaObject(APIObject):
     """
-    Adds a constructor which instantiates the object attributes corresponding
-    to the keys and values from :initialise_with. Additionally, any key word
-    arguments passed into the constructor will be assigned to the object.
+    Adds a constructor which adds attributes to self which correspond to the
+    keys and values from :initialise_with. Additionally, any key word arguments
+    passed into the constructor will be assigned to the object.
 
-    Example:
-        SomeClass(initialise_with={'some_attribute': True})` creates an instance
-        of SomeClass with the attribute `some_attribute` equal to True.
+    Ex:
+        ```
+        class SomeClass(AssemblaObject):
+            pass
 
-    Any keyword arguments passed in will overwrite the values of corresponding
-    entries in :initialise_with
+        some_class = SomeClass(
+            initialise_with={'some_attribute': True},
+            some_other_attribute=False,
+            )
+        ````
+        creates an instance of SomeClass with the attributes
+        'some_attribute' == True and 'some_other_attribute' == False
+
+    ** A warning that the values of keyword arguments passed in can overwrite
+    the values of similarly named keys from :initialise_with **
     """
-
     def __init__(self, initialise_with=None, **kwargs):
         # :initialise_with's assignments are kept before the :kwargs assignments
         # as :kwargs' values take precedence

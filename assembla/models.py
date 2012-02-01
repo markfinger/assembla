@@ -43,8 +43,11 @@ class API(APIObject):
         Return the space with attributes matching the keyword arguments passed
         in.
 
-        Ex: space(id=1, name='my space') returns the space with matching
-        attributes
+        Ex:
+            ```
+            space(id=1, name='my space')
+            ```
+            returns the space with matching attributes
         """
         return self._filter(self.spaces(), **kwargs)
 
@@ -73,8 +76,11 @@ class Space(AssemblaObject):
         Return the milestone with attributes matching the keyword arguments
         passed in.
 
-        Ex: milestone(id=1, name='my milestone') returns the milestone with
-        matching attributes
+        Ex:
+            ```
+            milestone(id=1, name='my milestone')
+            ```
+            returns the milestone with matching attributes
         """
         return self._filter(self.milestones(), **kwargs)
 
@@ -96,8 +102,11 @@ class Space(AssemblaObject):
         Return the ticket with attributes matching the keyword arguments passed
         in.
 
-        Ex: ticket(id=1, name='my ticket') returns the ticket with matching
-        attributes
+        Ex:
+            ```
+            ticket(id=1, name='my ticket')
+            ```
+            returns the ticket with matching attributes
         """
         return self._filter(self.tickets(), **kwargs)
     
@@ -119,7 +128,11 @@ class Space(AssemblaObject):
         Return the user with attributes matching the keyword arguments passed
         in.
 
-        Ex: user(id=1, name='John Smith') returns the user with matching attributes
+        Ex:
+            ```
+            user(id=1, name='John Smith')
+            ```
+            returns the user with matching attributes
         """
         return self._filter(self.users(), **kwargs)
 
@@ -160,8 +173,11 @@ class User(AssemblaObject):
         Return the ticket with attributes matching the keyword arguments
         passed in.
 
-        Ex: ticket(id=1, name='my ticket') returns the ticket with
-        matching attributes
+        Ex:
+            ```
+            ticket(id=1, name='my ticket')
+            ```
+            returns the ticket with matching attributes
         """
         return self._filter(self.tickets(), **kwargs)
 
