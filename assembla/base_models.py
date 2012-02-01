@@ -212,7 +212,7 @@ class AssemblaObject(APIObject):
     ** A warning that the values of keyword arguments passed in can overwrite
     the values of similarly named keys from :initialise_with **
     """
-    def __init__(self, initialise_with=None, **kwargs):
+    def __init__(self, initialise_with={}, **kwargs):
         # :initialise_with's assignments are kept before the :kwargs assignments
         # as :kwargs' values take precedence
         for attr_name, value in initialise_with.iteritems():
