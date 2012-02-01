@@ -1,4 +1,4 @@
-from base_models import *
+from base_models import APIObject, AssemblaObject
 from error import AssemblaError
 
 
