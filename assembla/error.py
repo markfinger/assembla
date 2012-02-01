@@ -13,7 +13,7 @@ class AssemblaError(Exception):
         130: "Unexpected response from Assembla, response ({status_code}) from '{url}'.",
         # Assembla Retrieval
         200: "Cannot find '{object}' with a primary key matching '{pk}'",
-        210: "Multiple instances of '{object}' found with primary keys matching '{pk}'",
+        210: "Multiple objects found using arguments: '{arguments}'",
     }
 
     def __init__(self, code, *args, **kwargs):

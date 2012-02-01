@@ -7,6 +7,7 @@ from lxml import etree
 
 from error import AssemblaError
 
+
 class APIObject(object):
     """
     Base object for representations of objects on Assembla.
@@ -158,6 +159,30 @@ class APIObject(object):
             self._recursive_dict(element)
                 for element in tree.getroot().getchildren()
             ]
+
+    def _filter(self, data, **kwargs):
+        """
+        Filters :data for the objects in it which possess attributes equal in
+        name/value to a key/value in kwargs. Each key/value combination in
+        kwargs is compared against the object, so multiple keyword arguments
+        can be passed in to constrain the filtering.
+        """
+        results = filter(
+            lambda object: len(kwargs) == len(
+                filter(
+                    lambda element: element == True,
+                    [getattr(object, attr_name) == value
+                        for attr_name, value in kwargs.iteritems()]
+                    )
+                ),
+            data
+        )
+        if len(results) == 1:
+            return results[0]
+        elif len(results) > 1:
+            raise AssemblaError(210, arguments=kwargs)
+        else:
+            return None
 
 
 class AssemblaObject(APIObject):

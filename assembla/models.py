@@ -38,6 +38,16 @@ class API(APIObject):
                 ) for data in raw_data
             ]
 
+    def space(self, **kwargs):
+        """
+        Return the space with attributes matching the keyword arguments passed
+        in.
+
+        Ex: space(id=1, name='my space') returns the space with matching
+        attributes
+        """
+        return self._filter(self.spaces(), **kwargs)
+
 
 class Space(AssemblaObject):
     class Meta(APIObject.Meta):
@@ -58,6 +68,16 @@ class Space(AssemblaObject):
                 ) for data in raw_data
             ]
 
+    def milestone(self, **kwargs):
+        """
+        Return the milestone with attributes matching the keyword arguments
+        passed in.
+
+        Ex: milestone(id=1, name='my milestone') returns the milestone with
+        matching attributes
+        """
+        return self._filter(self.milestones(), **kwargs)
+
     def tickets(self):
         """
         Return the tickets in the space
@@ -71,6 +91,16 @@ class Space(AssemblaObject):
                 ) for data in raw_data
             ]
 
+    def ticket(self, **kwargs):
+        """
+        Return the ticket with attributes matching the keyword arguments passed
+        in.
+
+        Ex: ticket(id=1, name='my ticket') returns the ticket with matching
+        attributes
+        """
+        return self._filter(self.tickets(), **kwargs)
+    
     def users(self):
         """
         Return the users in the space
@@ -83,6 +113,15 @@ class Space(AssemblaObject):
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
+
+    def user(self, **kwargs):
+        """
+        Return the user with attributes matching the keyword arguments passed
+        in.
+
+        Ex: user(id=1, name='John Smith') returns the user with matching attributes
+        """
+        return self._filter(self.users(), **kwargs)
 
 
 class Milestone(AssemblaObject):
@@ -115,6 +154,16 @@ class User(AssemblaObject):
             lambda ticket: ticket.assigned_to_id == self.id,
             self.space.tickets(),
             )
+
+    def ticket(self, **kwargs):
+        """
+        Return the ticket with attributes matching the keyword arguments
+        passed in.
+
+        Ex: ticket(id=1, name='my ticket') returns the ticket with
+        matching attributes
+        """
+        return self._filter(self.tickets(), **kwargs)
 
 
 class Ticket(AssemblaObject):
