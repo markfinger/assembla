@@ -188,19 +188,21 @@ class APIObject(object):
 class AssemblaObject(APIObject):
     """
     Adds a constructor which instantiates the object attributes corresponding
-    to the keys and values from :initialise_with.
+    to the keys and values from :initialise_with. Additionally, any key word
+    arguments passed into the constructor will be assigned to the object.
 
     Example:
         SomeClass(initialise_with={'some_attribute': True})` creates an instance
-        of SomeClass with the attribute `some_attribute` equal to True
+        of SomeClass with the attribute `some_attribute` equal to True.
+
+    Any keyword arguments passed in will overwrite the values of corresponding
+    entries in :initialise_with
     """
 
-    def __init__(self, initialise_with=None, space=None, milestone=None,
-                 user=None, auth=None):
-        if initialise_with:
-            for key in initialise_with.keys():
-                setattr(self, key, initialise_with[key])
-        if space:
-            self.space = space
-        if auth:
-            self.auth = auth
+    def __init__(self, initialise_with=None, **kwargs):
+        # :initialise_with's assignments are kept before the :kwargs assignments
+        # as :kwargs' values take precedence
+        for attr_name, value in initialise_with.iteritems():
+            setattr(self, attr_name, value)
+        for attr_name, value in kwargs.iteritems():
+            setattr(self, attr_name, value)
