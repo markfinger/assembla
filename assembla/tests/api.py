@@ -15,6 +15,7 @@ class TestsForAPI(object):
 
     def test_child_functions_exist(self):
         assert self.API.spaces
+        assert self.API.space
 
     def test_api_init_accepts_auth_credentials(self):
         assert self.API.auth == auth
@@ -44,33 +45,47 @@ class TestsForAPI(object):
         except AssemblaError as e:
             assert e.code==110
 
+    def __test_space_type(self, obj):
+        assert type(obj) is Space
+        # Required attributes
+        assert obj.name is not None
+        assert obj.wiki_name is not None
+        # Despite this being a required field, it doesn't seem to be sent
+        # back from the API. Leaving it in here in case it's just temporary
+        # bug.
+        # assert obj.wiki_format is not None
+        assert obj.team_permissions is not None
+        assert obj.public_permissions is not None
+        # Check that fields have been converted to Python types
+        assert type(obj.team_permissions) is int
+        assert type(obj.can_join) is bool
+        assert type(obj.created_at) is datetime
+        assert type(obj.updated_at) is datetime
+        assert type(obj.is_volunteer) is bool
+        assert type(obj.is_commercial) is bool
+        assert type(obj.is_manager) is bool
+        return True
+
     def test_spaces_returns_mulitple_objects_of_type_space(self):
         for space in self.spaces:
-            assert type(space) is Space
-            # Required attributes
-            assert space.name is not None
-            assert space.wiki_name is not None
-            # Despite this being a required field, it doesn't seem to be sent
-            # back from the API. Leaving it in here in case it's just temporary
-            # bug.
-            # assert space.wiki_format is not None
-            assert space.team_permissions is not None
-            assert space.public_permissions is not None
-            # Check that fields have been converted to Python types
-            assert type(space.team_permissions) is int
-            assert type(space.can_join) is bool
-            assert type(space.created_at) is datetime
-            assert type(space.updated_at) is datetime
-            assert type(space.is_volunteer) is bool
-            assert type(space.is_commercial) is bool
-            assert type(space.is_manager) is bool
+            assert self.__test_space_type(space)
         assert len(self.spaces) > 0
+
+    def test_space_returns_type_space(self):
+        space = self.API.space(
+            id=self.spaces[0].id,
+            wiki_name=self.spaces[0].wiki_name,
+        )
+        assert space.id == self.spaces[0].id
+        assert space.wiki_name == self.spaces[0].wiki_name
+        assert self.__test_space_type(space)
 
     def test_bad_url_for_get_xml_tree(self):
         try:
             self.API._get_xml_tree(
+                # Hopefully this fails :)
                 url='http://www.csdhjbcjsdbajcbsdjb.com/cdjsbjhcsbdjhcsj/cdhsjbcjsdhcjhscdhb/csdjhbcsdjbchsdjbbjcds',
-                auth=('_', '_',)
+                auth=('^__^', '^__^',)
                 )
         except AssemblaError as e:
             assert e.code==130

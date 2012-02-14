@@ -168,9 +168,27 @@ class APIObject(object):
     def _filter(self, data, **kwargs):
         """
         Filters :data for the objects in it which possess attributes equal in
-        name/value to a key/value in kwargs. Each key/value combination in
-        kwargs is compared against the object, so multiple keyword arguments
-        can be passed in to constrain the filtering.
+        name/value to a key/value in kwargs.
+
+        Each key/value combination in kwargs is compared against the object, so
+        multiple keyword arguments can be passed in to constrain the filtering.
+
+        Ex:
+            ```
+            self._filter(
+                [my_object, my_other_object],
+                some_attribute=1
+                some_other_attribute=True
+                )
+            ```
+            which returns all objects in the first argument (an iterable) which
+            have attributes 'some_attribute' and 'some_other_attribute' equal
+            to `1` and `True` respectively.
+
+        _filter will throw an AttributeError if any of the kwargs are not
+        possessed by the objects in the iterable. While it might seem to be
+        easier to wrap the comparisons in a try/except, it would come at the
+        cost of reducing the transparency behind _filter's behaviour
         """
         results = filter(
             lambda object: len(kwargs) == len(
@@ -207,10 +225,10 @@ class AssemblaObject(APIObject):
             )
         ````
         creates an instance of SomeClass with the attributes
-        'some_attribute' == True and 'some_other_attribute' == False
+        'some_attribute' == True and 'some_other_attribute' == False.
 
-    ** A warning that the values of keyword arguments passed in can overwrite
-    the values of similarly named keys from :initialise_with **
+    Note that the values of keyword arguments passed in can overwrite
+    the values of similarly named keys from :initialise_with
     """
     def __init__(self, initialise_with={}, **kwargs):
         # :initialise_with's assignments are kept before the :kwargs assignments

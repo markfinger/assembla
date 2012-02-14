@@ -22,8 +22,11 @@ class TestsForSpace(object):
 
     def test_child_functions_exist(self):
         assert self.space.milestones
+        assert self.space.milestone
         assert self.space.users
+        assert self.space.user
         assert self.space.tickets
+        assert self.space.ticket
 
     def test_urls(self):
         space = Space()

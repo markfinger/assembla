@@ -152,6 +152,19 @@ class Milestone(AssemblaObject):
             self.space.tickets(),
             )
 
+    def ticket(self, **kwargs):
+        """
+        Return the ticket with attributes matching the keyword arguments
+        passed in.
+
+        Ex:
+            ```
+            ticket(id=1, name='my ticket')
+            ```
+            returns the ticket with matching attributes
+        """
+        return self._filter(self.tickets(), **kwargs)
+
 
 class User(AssemblaObject):
     class Meta(APIObject.Meta):

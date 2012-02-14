@@ -29,6 +29,7 @@ class TestsForUser(object):
 
     def test_child_functions_exist(self):
         assert self.user.tickets
+        assert self.user.ticket
 
     def test_urls(self):
         space = Space()
