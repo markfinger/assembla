@@ -1,4 +1,4 @@
-from base_models import APIObject, AssemblaObject
+from base_models import APIObject, AssemblaObject, Cache
 from error import AssemblaError
 
 
@@ -53,14 +53,17 @@ class API(APIObject):
 
 
 class Space(AssemblaObject):
+
+    cache = Cache()
+
     class Meta(APIObject.Meta):
         primary_key = 'id'
         relative_url = 'spaces/{pk}'
         relative_list_url = 'spaces/my_spaces'
 
-    def milestones(self):
+    def _milestones(self):
         """
-        Return the milestones in the space
+        Returns a list of Milestone instances created from the API
         """
         url = Milestone(space=self).list_url()
         raw_data = self._harvest(url=url)
@@ -70,6 +73,14 @@ class Space(AssemblaObject):
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
+
+    def milestones(self):
+        """
+        Return the milestones in the space
+        """
+        if not self.cache['milestones']:
+            self.cache['milestones'] = self._milestones()
+        return self.cache['milestones']
 
     def milestone(self, **kwargs):
         """
@@ -84,9 +95,9 @@ class Space(AssemblaObject):
         """
         return self._filter(self.milestones(), **kwargs)
 
-    def tickets(self):
+    def _tickets(self):
         """
-        Return the tickets in the space
+        Returns a list of Ticket instances created from the API
         """
         url = Ticket(space=self).list_url()
         raw_data = self._harvest(url=url)
@@ -96,6 +107,15 @@ class Space(AssemblaObject):
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
+
+    def tickets(self):
+        """
+        Return the tickets in the space
+        """
+        if not self.cache['tickets']:
+            self.cache['tickets'] = self._tickets()
+        return self.cache['tickets']
+
 
     def ticket(self, **kwargs):
         """
@@ -109,10 +129,10 @@ class Space(AssemblaObject):
             returns the ticket with matching attributes
         """
         return self._filter(self.tickets(), **kwargs)
-    
-    def users(self):
+
+    def _users(self):
         """
-        Return the users in the space
+        Returns a list of User instances created from the API
         """
         url = User(space=self).list_url()
         raw_data = self._harvest(url=url)
@@ -122,6 +142,15 @@ class Space(AssemblaObject):
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
+
+    def users(self):
+        """
+        Return the users in the space
+        """
+        if not self.cache['users']:
+            self.cache['users'] = self._users()
+        return self.cache['users']
+
 
     def user(self, **kwargs):
         """

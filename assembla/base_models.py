@@ -1,3 +1,4 @@
+from copy import deepcopy
 from functools import partial
 from StringIO import StringIO
 from datetime import date, datetime
@@ -237,3 +238,23 @@ class AssemblaObject(APIObject):
             setattr(self, attr_name, value)
         for attr_name, value in kwargs.iteritems():
             setattr(self, attr_name, value)
+
+class Cache(dict):
+    """
+    Cache storage. Reduces repeated request overheads at the cost that some
+    responses may have outdated data.
+    """
+
+    _schema = {
+        'milestones': [],
+        'tickets': [],
+        'users': [],
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(Cache, self).__init__(*args, **kwargs)
+        self.flush()
+
+    def flush(self):
+        for key, value in self._schema.iteritems():
+            self.__setitem__(key, value)
