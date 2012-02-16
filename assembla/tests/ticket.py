@@ -4,9 +4,8 @@ from .auth import auth
 
 class TestsForTicket(object):
 
-    def setup(self):
-        self.ticket = Ticket()
-        self.API = API(auth)
+    ticket = Ticket()
+    API = API(auth)
 
     def test_attributes_exist(self):
         # Base class

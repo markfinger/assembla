@@ -6,20 +6,15 @@ from ..models import Milestone, Space, Ticket
 
 class TestsForMilestone(object):
 
-    def setup(self):
-        self.API = API(auth)
-        self.spaces = self.API.spaces()
-        self.space = self.spaces[0]
-        self.milestones = self.space.milestones()
-        # Find a milestone with tickets.
-        milestone_id = Counter(
-            [ticket.milestone_id for ticket in self.space.tickets()]
-        ).keys()[0]
-        self.milestone = filter(
-            lambda milestone: milestone.id == milestone_id,
-            self.milestones
-        )[0]
-        self.tickets = self.milestone.tickets()
+    API = API(auth)
+    spaces = API.spaces()
+    space = spaces[0]
+    # Find a milestone with tickets.
+    milestone = space.milestone(
+        id=Counter(
+            [ticket.milestone_id for ticket in space.tickets()]
+            ).keys()[0]
+        )
 
     def test_attributes_exist(self):
         # Base class
@@ -40,11 +35,11 @@ class TestsForMilestone(object):
         assert milestone.url() == 'https://www.assembla.com/spaces/test_space_pk/milestones/test_milestone_pk'
 
     def test_child_functions_returns_mulitple_objects_of_the_correct_type(self):
-        for ticket in self.tickets:
+        for ticket in self.milestone.tickets():
             assert type(ticket) is Ticket
             assert type(ticket.space) is Space
             assert ticket.space_id == self.space.id
-            assert ticket.space == self.space
+            assert ticket.space.pk() == self.space.pk()
             assert ticket.milestone_id == self.milestone.id
             # Required attributes
             assert ticket.number is not None
@@ -58,5 +53,5 @@ class TestsForMilestone(object):
             assert type(ticket.milestone_id) is int
             assert type(ticket.created_on) is datetime
             assert type(ticket.id) is int
-        assert len(self.tickets) > 0
+        assert len(self.milestone.tickets()) > 0
 

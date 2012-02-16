@@ -6,9 +6,8 @@ from ..error import AssemblaError
 
 class TestsForAPI(object):
 
-    def setup(self):
-        self.API = API(auth)
-        self.spaces = self.API.spaces()
+    API = API(auth)
+    spaces = API.spaces()
 
     def test_api_can_be_initialised(self):
         assert API(auth=('_','_',))
@@ -84,7 +83,7 @@ class TestsForAPI(object):
         try:
             self.API._get_xml_tree(
                 # Hopefully this fails :)
-                url='http://www.csdhjbcjsdbajcbsdjb.com/cdjsbjhcsbdjhcsj/cdhsjbcjsdhcjhscdhb/csdjhbcsdjbchsdjbbjcds',
+                url='http://www.csdhjbc****jsdbajcbsdjb.com/cdjsbjhcsbdjhcsj/cdhsjbcjsdhcjhscdhb/csdjhbcsdjbchsdjbbjcds',
                 auth=('^__^', '^__^',)
                 )
         except AssemblaError as e:

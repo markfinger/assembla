@@ -7,25 +7,24 @@ from .auth import auth
 
 class TestsForUser(object):
 
-    def setup(self):
-        self.API = API(auth)
-        self.spaces = self.API.spaces()
-        self.space = self.spaces[0]
-        self.users = self.space.users()
-        # Find a user with assigned tickets.
-        user_id = Counter([
-            ticket.assigned_to_id for ticket in self.space.tickets()
+    API = API(auth)
+    spaces = API.spaces()
+    space = spaces[0]
+    users = space.users()
+    # Find a user with assigned tickets.
+    user = space.user(
+        id=Counter([
+            ticket.assigned_to_id for ticket in space.tickets()
                 if ticket.assigned_to_id is not None
-        ]).keys()[0]
-        self.user = filter(lambda user: user.id == user_id,self.users)[0]
-        self.tickets = self.user.tickets()
+            ]).keys()[0]
+        )
+    tickets = user.tickets()
 
     def test_attributes_exist(self):
         # Base class
         assert self.user.Meta.relative_url
         assert self.user.Meta.primary_key
         assert self.user.Meta.base_url
-        # Unique attributes
 
     def test_child_functions_exist(self):
         assert self.user.tickets
@@ -45,7 +44,7 @@ class TestsForUser(object):
             assert type(ticket) is Ticket
             assert type(ticket.space) is Space
             assert ticket.space_id == self.space.id
-            assert ticket.space == self.space
+            assert ticket.space.pk() == self.space.pk()
             assert ticket.assigned_to_id == self.user.id
             # Required attributes
             assert ticket.number is not None
@@ -64,7 +63,7 @@ class TestsForUser(object):
         for user in self.users:
             assert type(user) is User
             assert type(user.space) is Space
-            assert user.space == self.space
+            assert user.space.pk() == self.space.pk()
             # Required attributes
             assert user.login is not None
             assert user.id is not None

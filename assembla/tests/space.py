@@ -5,13 +5,12 @@ from .auth import auth
 
 class TestsForSpace(object):
 
-    def setup(self):
-        self.API = API(auth)
-        self.spaces = self.API.spaces()
-        self.space = self.spaces[0]
-        self.milestones = self.space.milestones()
-        self.tickets = self.space.tickets()
-        self.users = self.space.users()
+    API = API(auth)
+    spaces = API.spaces()
+    space = spaces[0]
+    milestones = space.milestones()
+    tickets = space.tickets()
+    users = space.users()
 
     def test_attributes_exist(self):   
         # Base class
@@ -42,7 +41,7 @@ class TestsForSpace(object):
             assert type(milestone) is Milestone
             assert type(milestone.space) is Space
             assert milestone.space_id == self.space.id
-            assert milestone.space == self.space
+            assert milestone.space.pk() == self.space.pk()
             # Required attributes
             assert milestone.title is not None
             # Check that fields have been converted to Python types
@@ -58,7 +57,7 @@ class TestsForSpace(object):
             assert type(ticket) is Ticket
             assert type(ticket.space) is Space
             assert ticket.space_id == self.space.id
-            assert ticket.space == self.space
+            assert ticket.space.pk() == self.space.pk()
             # Required attributes
             assert ticket.number is not None
             assert ticket.summary is not None
@@ -76,7 +75,7 @@ class TestsForSpace(object):
         for user in self.users:
             assert type(user) is User
             assert type(user.space) is Space
-            assert user.space == self.space
+            assert user.space.pk() == self.space.pk()
             # Required attributes
             assert user.login is not None
             assert user.id is not None
