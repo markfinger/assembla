@@ -5,7 +5,7 @@ Assembla: Python wrapper for Assembla's RESTful API
 An easy to use wrapper around the Assembla API.
 
 Typical usage::
-	
+
 	import assembla
 
 	API = assembla.API(auth=('Username', 'Password',))
