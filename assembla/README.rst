@@ -1,10 +1,22 @@
-===========
+====================================================
 Assembla: Python wrapper for Assembla's RESTful API
-===========
+====================================================
 
 An easy to use wrapper around the Assembla API.
 
-Basic Example::
+ - `Basic Example`_
+ - `Examples for Spaces`_
+ - `Examples for Milestones`_
+ - `Examples for Users`_
+ - `Examples for Tickets`_
+ - `Model Reference`_
+ - `Caching`_
+
+
+Basic Example
+-------------
+
+::
 
 	from assembla import API
 
@@ -12,7 +24,9 @@ Basic Example::
 
 	print assembla.space(name='Big Project').ticket(number=201).status_name
 
-Space Examples::
+Examples for Spaces
+-------------------
+::
 
 	# Retrieve your available spaces
 	spaces = API.spaces()
@@ -22,46 +36,78 @@ Space Examples::
 
 	# Retrieve the space's milestones
 	milestones = space.milestones()
+
 	# Retrieve a specific milestone from the space
 	milestone = space.milestone('Release Candidate 1')
 
 	# Retrieve the space's tickets
 	tickets = space.tickets()
+
 	# Retrieve a specific ticket from the space
 	ticket = space.ticket(number=301)
 
 	# Retrieve the space's users
 	users = space.users()
+
 	# Retrieve a specific user from the space
 	user = space.user(name='John Smith')
 
-Milestone Examples::
+Examples for Milestones
+-----------------------
+::
 
 	# Select a specific milestone
 	milestone = assembla.space(name='Big Project').milestone('Release Candidate 1')
 
 	# Retrieve the milestone's tickets
 	tickets = milestone.tickets()
+
 	# Retrieve a specific ticket from the milestone
 	ticket = milestone.ticket(number=301)
 
 	# Retrieve the milestone's users
 	users = milestone.users()
+
 	# Retrieve a specific user from the milestone
 	user = milestone.user(name='John Smith')
 
-User Examples::
+Examples for Users
+------------------
+::
 
 	# Select a specific user
 	user = assembla.space(name='Big Project').user(name='John Smith')
 
 	# Retrieve the user's tickets
 	tickets = user.tickets()
+
 	# Retrieve a specific ticket from the user
 	ticket = user.ticket(status_name='Test')
 
-Model Reference: fields generally follow Assembla's reference: http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API
+Examples for Tickets
+--------------------
+::
 
+	# Retrieve a specific ticket
+	ticket = space.ticket(number=201)
+
+	# Retrieve all tickets awaiting code review
+	tickets = space.tickets(status_name='Code Review')
+
+	# Retrieve all tickets assigned to an individual which are of a certain priority
+	tickets = space.tickets(
+		assigned_to_id=user.id,
+		priority
+
+Model Reference
+---------------
+All models (Space, Milestone, User and Ticket) are returned with fields corresponding
+to the data from Assembla. Naming conventions generally follow Assembla's `API
+Reference <http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API>`_.
+Where possible, values are converted to native Python types.
+
+Caching
+-------
 Spaces have an in-memory caching system, which reduces the overheard on repeated
 requests to Assembla. By default, it is activated. You can deactivate it::
 
