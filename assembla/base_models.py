@@ -1,5 +1,4 @@
 from copy import deepcopy
-from functools import partial
 from StringIO import StringIO
 from datetime import date, datetime
 from collections import MutableMapping
@@ -57,7 +56,7 @@ class APIObject(object):
         except AttributeError:
             return None
 
-    def url(self, base_url=None, relative_url=None, *args, **kwargs):
+    def url(self, base_url=None, relative_url=None):
         """
         Generates an absolute url to a model's instance in the API.
         """
@@ -72,11 +71,11 @@ class APIObject(object):
                 'pk': self._safe_pk(),
                 })
 
-    def list_url(self, *args, **kwargs):
+    def list_url(self):
         """
         Generates an absolute url to a list of the model's type on the API.
         """
-        return self.url(relative_url=self.Meta.relative_list_url, *args, **kwargs)
+        return self.url(relative_url=self.Meta.relative_list_url)
 
     def _get_pk_of_attr(self, attr, default=None):
         """

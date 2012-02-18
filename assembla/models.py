@@ -1,4 +1,4 @@
-from base_models import APIObject, AssemblaObject, Cache
+from base_models import APIObject, AssemblaObject
 from error import AssemblaError
 
 
@@ -37,7 +37,7 @@ class API(APIObject):
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
-    
+
     def spaces(self):
         """
         Returns the spaces available to the user

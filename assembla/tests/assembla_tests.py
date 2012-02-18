@@ -204,13 +204,13 @@ class TestAssembla:
         )
         assert milestone.pk() == self.space.milestones()[0].pk()
         assert self.__test_milestone_type(milestone)
-        
+
         ticket = self.space.ticket(
             **{Ticket.Meta.primary_key:self.space.tickets()[0].pk()}
         )
         assert ticket.pk() == self.space.tickets()[0].pk()
         assert self.__test_ticket_type(ticket)
-        
+
         user = self.space.user(
             **{User.Meta.primary_key:self.space.users()[0].pk()}
         )
