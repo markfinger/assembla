@@ -125,6 +125,6 @@ requests to Assembla. By default, it is activated. You can deactivate it::
 If you want to purge stale data from a space's cache and begin refilling it::
 
 	# Purge stale data from the space's cache, any subsequent request will update the cache
-	space.cache.clear()
+	space.cache.purge()
 
 Source: https://github.com/markfinger/assembla

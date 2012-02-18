@@ -260,7 +260,7 @@ class AssemblaObject(APIObject):
             setattr(self, attr_name, value)
         if hasattr(self.Meta, 'cache_schema'):
             # Responses will be cached.
-            # Call ```space.cache.clear()``` to purge all data from the cache
+            # Call ```space.cache.purge()``` to purge all data from the cache
             self.cache = Cache(
                 parent=self,
                 schema=self.Meta.cache_schema,
@@ -279,7 +279,7 @@ class Cache(MutableMapping):
     objects themselves. This is to maintain a semi-immutable cache resembling
     the API as closely as possible.
 
-    Call ```Cache.clear()``` to purge any data, any subsequent
+    Call ```Cache.purge()``` to purge any data, any subsequent
     requests will return fresh data from Assembla.
     """
 
@@ -319,7 +319,7 @@ class Cache(MutableMapping):
     def deactivate(self):
         self.cache_responses = False
 
-    def clear(self):
+    def purge(self):
         """
         Purges the cache of any data it may have by reinstantiating itself from
         the schema
