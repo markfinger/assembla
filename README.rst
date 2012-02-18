@@ -29,10 +29,10 @@ Examples for Spaces
 ::
 
 	# Retrieve your available spaces
-	spaces = API.spaces()
+	spaces = assembla.spaces()
 
 	# Select a specific space
-	space = API.space(name='Big Project')
+	space = assembla.space(name='Big Project')
 
 	# Retrieve the space's milestones
 	milestones = space.milestones()
@@ -119,6 +119,7 @@ requests to Assembla. By default, it is activated. You can deactivate it::
 
 	# Deactivate the cache for a space, all subsequent requests will return fresh data
 	space.cache.deactivate()
+
 	# Deactivate the cache for all spaces instantiated from `assembla`
 	assembla = API(auth=('Username', 'Password',), use_cache=False)
 
