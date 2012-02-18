@@ -101,11 +101,14 @@ class Space(AssemblaObject):
         """
         return self._harvest_child_objects(Milestone)
 
-    def milestones(self):
+    def milestones(self, **kwargs):
         """
         Returns the milestones in the space
         """
-        return self._get_from_cache('milestones')
+        return self._filter(
+            self._get_from_cache('milestones'),
+            **kwargs
+            )
 
     def milestone(self, **kwargs):
         """
@@ -122,12 +125,14 @@ class Space(AssemblaObject):
         """
         return self._harvest_child_objects(Ticket)
 
-    def tickets(self):
+    def tickets(self, **kwargs):
         """
         Returns the tickets in the space
         """
-        return self._get_from_cache('tickets')
-
+        return self._filter(
+            self._get_from_cache('tickets'),
+            **kwargs
+            )
 
     def ticket(self, **kwargs):
         """
@@ -144,11 +149,14 @@ class Space(AssemblaObject):
         """
         return self._harvest_child_objects(User)
 
-    def users(self):
+    def users(self, **kwargs):
         """
         Returns the users in the space
         """
-        return self._get_from_cache('users')
+        return self._filter(
+            self._get_from_cache('users'),
+            **kwargs
+            )
 
 
     def user(self, **kwargs):
@@ -168,11 +176,11 @@ class Milestone(AssemblaObject):
         relative_url = 'spaces/{space}/milestones/{pk}'
         relative_list_url = 'spaces/{space}/milestones'
 
-    def tickets(self):
+    def tickets(self, **kwargs):
         """
         Returns the tickets in the milestone
         """
-        return self._filter(self.space.tickets(), milestone_id=self.id)
+        return self._filter(self.space.tickets(**kwargs), milestone_id=self.id)
 
     def ticket(self, **kwargs):
         """
@@ -191,11 +199,11 @@ class User(AssemblaObject):
         relative_url = 'profile/{pk}'
         relative_list_url = 'spaces/{space}/users'
 
-    def tickets(self):
+    def tickets(self, **kwargs):
         """
         Returns the tickets in the space which are assigned to the user
         """
-        return self._filter(self.space.tickets(), assigned_to_id=self.id)
+        return self._filter(self.space.tickets(**kwargs), assigned_to_id=self.id)
 
     def ticket(self, **kwargs):
         """

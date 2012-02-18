@@ -182,6 +182,8 @@ class APIObject(object):
         Primary difference from _filter is that it will raise Exceptions if
         multiple objects are found
         """
+        if not kwargs:
+            raise AssemblaError(220)
         results = self._filter(data, **kwargs)
         if len(results) == 1:
             return results[0]
@@ -213,8 +215,6 @@ class APIObject(object):
         easier to wrap the comparisons in a try/except, it would come at the
         cost of reducing the transparency behind _filter's behaviour
         """
-        if not kwargs:
-            raise AssemblaError(220)
         return filter(
             lambda object: len(kwargs) == len(
                 filter(
