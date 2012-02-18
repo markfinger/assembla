@@ -163,11 +163,10 @@ class APIObject(object):
         """
         return name.replace('-', '_')
 
-    def _harvest(self, url, auth=None):
+    def _harvest(self, url, auth):
         """
         Returns :url as a dict
         """
-        auth = auth or self.auth or self.space.auth
         tree = self._get_xml_tree(url, auth)
         return [
             self._recursive_dict(element)
@@ -251,9 +250,10 @@ class AssemblaObject(APIObject):
     If the subclass has had a cache schema defined in Meta, the constructor will
     instantiate a Cache object for it.
     """
-    def __init__(self, initialise_with={}, use_cache=True, **kwargs):
+    def __init__(self, initialise_with=None, use_cache=True, **kwargs):
         # :initialise_with's assignments are kept before the :kwargs assignments
         # as :kwargs' values take precedence
+        if not initialise_with: initialise_with = {}
         for attr_name, value in initialise_with.iteritems():
             setattr(self, attr_name, value)
         for attr_name, value in kwargs.iteritems():

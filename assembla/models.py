@@ -29,9 +29,7 @@ class API(APIObject):
             return True
 
     def _get_spaces(self):
-        raw_data = self._harvest(
-            url=Space().list_url(),
-            )
+        raw_data = self._harvest(url=Space().list_url(), auth=self.auth)
         return [
             Space(
                 auth=self.auth,
@@ -70,7 +68,7 @@ class Space(AssemblaObject):
         Harvests and returns the space's objects matching :child_class.
         """
         url = child_class(space=self).list_url()
-        raw_data = self._harvest(url=url)
+        raw_data = self._harvest(url=url, auth=self.auth)
         return [
             child_class(
                 space=self,
