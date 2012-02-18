@@ -40,13 +40,16 @@ Examples for Spaces
 	# Retrieve a specific milestone from the space
 	milestone = space.milestone('Release Candidate 1')
 
-	# Retrieve the space's tickets
+	# Retrieve all of the space's tickets
 	tickets = space.tickets()
+
+	# Retrieve the space's tickets which are awaiting testing
+	tickets = space.tickets(status_name='Test')
 
 	# Retrieve a specific ticket from the space
 	ticket = space.ticket(number=301)
 
-	# Retrieve the space's users
+	# Retrieve all of the space's users
 	users = space.users()
 
 	# Retrieve a specific user from the space
