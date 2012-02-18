@@ -98,16 +98,19 @@ Examples for Tickets
 	tickets = space.tickets(status_name='Code Review')
 
 	# Retrieve all tickets assigned to an individual which are of a certain priority
+	# and awaiting testing
 	tickets = space.tickets(
 		assigned_to_id=user.id,
-		priority
+		priority=1,
+		status_name='Test'
+		)
 
 Model Reference
 ---------------
 All models (Space, Milestone, User and Ticket) are returned with fields corresponding
 to the data from Assembla. Naming conventions generally follow Assembla's `API
 Reference <http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API>`_.
-Where possible, values are converted to native Python types.
+Where possible, values are coerced to native Python types.
 
 Caching
 -------
