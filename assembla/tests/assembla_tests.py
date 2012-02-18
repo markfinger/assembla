@@ -10,7 +10,8 @@ class TestAssembla:
     Unit tests the Assembla API wrapper
     """
     assembla = API(auth)
-    space = assembla.spaces()[0]
+    spaces = assembla.spaces()
+    space = spaces[0]
     # Find a milestone with tickets.
     milestone = space.milestone(
         id=Counter(
@@ -87,17 +88,17 @@ class TestAssembla:
         return True
 
     def test_spaces_returns_mulitple_objects_of_type_space(self):
-        assert len(self.assembla.spaces()) > 0
-        for space in self.assembla.spaces():
+        assert len(self.spaces) > 0
+        for space in self.spaces:
             assert self.__test_space_type(space)
 
     def test_space_returns_type_space(self):
         space = self.assembla.space(
-            id=self.assembla.spaces()[0].id,
-            wiki_name=self.assembla.spaces()[0].wiki_name,
+            id=self.spaces[0].id,
+            wiki_name=self.spaces[0].wiki_name,
         )
-        assert space.id == self.assembla.spaces()[0].id
-        assert space.wiki_name == self.assembla.spaces()[0].wiki_name
+        assert space.id == self.spaces[0].id
+        assert space.wiki_name == self.spaces[0].wiki_name
         assert self.__test_space_type(space)
 
     def test_bad_url_for_get_xml_tree(self):
@@ -111,10 +112,10 @@ class TestAssembla:
             assert e.code==130
 
     def test_cache_returns_copied_objects(self):
-        space = self.assembla.spaces()[0]
-        space.id = '{{{{{{========}}}}}}'
-        same_space = self.assembla.spaces()[0]
-        assert space.id != same_space.id
+        ticket = self.space.tickets()[0]
+        ticket.id = '{{{{{{========}}}}}}'
+        same_ticket = self.space.tickets()[0]
+        assert ticket.id != same_ticket.id
 
     ###################################
     #             SPACES              #
