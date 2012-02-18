@@ -87,11 +87,13 @@ class Space(AssemblaObject):
         the API and returned.
         """
         child_func = getattr(self, '_get_{0}'.format(child))
-        if not self.cache.cache_responses:
+        if self.cache.cache_responses:
+            if not self.cache.has_cached(child):
+                self.cache.set(child, child_func())
+            return self.cache.get(child)
+        else:
             return child_func()
-        if not self.cache.get(child):
-            self.cache[child] = child_func()
-        return self.cache.get(child)
+
 
     def _get_milestones(self):
         """

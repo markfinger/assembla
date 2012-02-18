@@ -54,7 +54,7 @@ class APIObject(object):
         try:
             return self.pk()
         except AttributeError:
-            return None
+            pass
 
     def url(self, base_url=None, relative_url=None):
         """
@@ -292,6 +292,7 @@ class Cache(MutableMapping):
 
     def __setitem__(self, key, value):
         self.store[key] = value
+    set = __setitem__
 
     def __getitem__(self, item):
         """
@@ -311,6 +312,9 @@ class Cache(MutableMapping):
 
     def __len__(self):
         return len(self.store)
+
+    def has_cached(self, item):
+        return True if self.store.has_key(item) and self.store[item] is not None else False
 
     def activate(self):
         self.cache_responses = True
