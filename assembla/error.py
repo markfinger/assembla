@@ -14,6 +14,7 @@ class AssemblaError(Exception):
         # Assembla Retrieval
         200: "Cannot find '{object}' with a primary key matching '{pk}'",
         210: "Multiple objects found using arguments: '{arguments}'",
+        220: "No arguments provided.",
     }
 
     def __init__(self, code, *args, **kwargs):

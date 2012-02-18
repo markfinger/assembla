@@ -2,6 +2,7 @@ from copy import deepcopy
 from functools import partial
 from StringIO import StringIO
 from datetime import date, datetime
+from collections import MutableMapping
 
 import requests
 from lxml import etree
@@ -20,6 +21,10 @@ class APIObject(object):
         """
         # A string denoting the key identifier for the model
         primary_key = None
+        # An optional string denoting the human readable identifier for the
+        # model. Only required if the attribute is not the same as the
+        # `primary_key` attribute
+        secondary_key = None
         # Python formattable string, which denotes a relative path to
         # the model on Assembla's API.
         relative_url = None
@@ -31,7 +36,10 @@ class APIObject(object):
         base_url = 'https://www.assembla.com/'
 
     def __str__(self):
-        return str(self.pk())
+        return '{0}: {1}'.format(
+            self.__class__.__name__,
+            getattr(self, self.Meta.secondary_key, None) or self.pk()
+            )
 
     def pk(self):
         """
@@ -191,6 +199,8 @@ class APIObject(object):
         easier to wrap the comparisons in a try/except, it would come at the
         cost of reducing the transparency behind _filter's behaviour
         """
+        if not kwargs:
+            raise AssemblaError(220)
         results = filter(
             lambda object: len(kwargs) == len(
                 filter(
@@ -211,12 +221,11 @@ class APIObject(object):
 
 class AssemblaObject(APIObject):
     """
-    Adds a constructor which adds attributes to self which correspond to the
-    keys and values from :initialise_with. Additionally, any key word arguments
-    passed into the constructor will be assigned to the object.
+    Adds a constructor which assigns attributes to the subclass based on
+    corresponding keys and values from :initialise_with. Additionally, any key
+    word arguments passed into the constructor will be assigned to the subclass.
 
-    Ex:
-        ```
+    Ex: ```
         class SomeClass(AssemblaObject):
             pass
 
@@ -230,6 +239,9 @@ class AssemblaObject(APIObject):
 
     Note that the values of keyword arguments passed in can overwrite
     the values of similarly named keys from :initialise_with
+
+    If the subclass has had a cache schema defined in Meta, the constructor will
+    instantiate a Cache object for it.
     """
     def __init__(self, initialise_with={}, **kwargs):
         # :initialise_with's assignments are kept before the :kwargs assignments
@@ -238,23 +250,57 @@ class AssemblaObject(APIObject):
             setattr(self, attr_name, value)
         for attr_name, value in kwargs.iteritems():
             setattr(self, attr_name, value)
+        if hasattr(self.Meta, 'cache_schema'):
+            # Responses will be cached.
+            # Call ```space.cache.clear()``` to purge all data from the cache
+            self.cache = Cache(self.Meta.cache_schema)
 
-class Cache(dict):
+
+class Cache(MutableMapping):
     """
-    Cache storage. Reduces repeated request overheads at the cost that some
-    responses may have outdated data.
+    In-memory Cache storage. Reduces overheads on repeated requests, at the cost
+    that some responses may have outdated data.
+
+    Generally the cache will try to return copies of objects, rather than the
+    objects themselves. This is to maintain a semi-immutable cache resembling
+    the API as closely as possible.
+
+    Call ```Cache.clear()``` to purge any data, any subsequent
+    requests will return fresh data from Assembla.
     """
 
-    _schema = {
-        'milestones': [],
-        'tickets': [],
-        'users': [],
-    }
+    def __init__(self, schema):
+        self.store = dict()
+        self.schema = schema
+        # Initiate the cache, using :schema
+        self.clear()
 
-    def __init__(self, *args, **kwargs):
-        super(Cache, self).__init__(*args, **kwargs)
-        self.flush()
+    def __setitem__(self, key, value):
+        self.store[key] = value
 
-    def flush(self):
-        for key, value in self._schema.iteritems():
-            self.__setitem__(key, value)
+    def __getitem__(self, item):
+        """
+        Return a copy of an item, rather than the actual item.
+
+        The cache stores lists of objects, rather than returning the object
+        directly, this traverses the stored list and returns deep copies of each
+        object.
+        """
+        return map(deepcopy, self.store[item])
+
+    def __delitem__(self, key):
+        del self.store.pop[key]
+
+    def __iter__(self):
+        return iter(self.store)
+
+    def __len__(self):
+        return len(self.store)
+
+    def clear(self):
+        """
+        Purges the cache of any data it may have by reinstantiating itself from
+        the schema
+        """
+        self.store.clear()
+        map(lambda name: self.__setitem__(name, []), self.schema)

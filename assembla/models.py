@@ -3,6 +3,10 @@ from error import AssemblaError
 
 
 class API(APIObject):
+
+    class Meta(APIObject.Meta):
+        cache_schema = ('spaces',)
+
     def __init__(self, auth=None, *args, **kwargs):
         """
         :auth is a required argument which should be in the format:
@@ -12,6 +16,11 @@ class API(APIObject):
         if not auth:
             raise AssemblaError(100)
         self.auth = auth
+        # Responses are cached, call ```API.cache.flush()``` to purge any old data.
+        self.cache = Cache(self.Meta.cache_schema)
+
+    def __str__(self):
+        return 'Assembla API'
 
     def check_credentials(self):
         """
@@ -23,11 +32,7 @@ class API(APIObject):
         else:
             return True
 
-    def spaces(self):
-        """
-        Return the spaces available to the user, each space is instantiated as
-        a Space
-        """
+    def _get_spaces(self):
         raw_data = self._harvest(
             url=Space().list_url(),
             )
@@ -37,84 +42,84 @@ class API(APIObject):
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
+    
+    def spaces(self):
+        """
+        Return the spaces available to the user
+        """
+        if not self.cache['spaces']:
+            self.cache['spaces'] = self._get_spaces()
+        return self.cache['spaces']
 
     def space(self, **kwargs):
         """
         Return the space with attributes matching the keyword arguments passed
         in.
 
-        Ex:
-            ```
-            space(id=1, name='my space')
-            ```
-            returns the space with matching attributes
+        Ex: ```api.space(name='my space')```
         """
         return self._filter(self.spaces(), **kwargs)
 
 
 class Space(AssemblaObject):
 
-    cache = Cache()
-
     class Meta(APIObject.Meta):
         primary_key = 'id'
+        secondary_key = 'name'
         relative_url = 'spaces/{pk}'
         relative_list_url = 'spaces/my_spaces'
+        cache_schema = ('milestones', 'users', 'tickets',)
 
-    def _milestones(self):
+    def _harvest_child_objects(self, child_class):
         """
-        Returns a list of Milestone instances created from the API
+        Harvests and returns the space's objects matching :child_class.
         """
-        url = Milestone(space=self).list_url()
+        url = child_class(space=self).list_url()
         raw_data = self._harvest(url=url)
         return [
-            Milestone(
+            child_class(
                 space=self,
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
 
+    def _get_milestones(self):
+        """
+        Harvests the space's milestones from the API
+        """
+        return self._harvest_child_objects(Milestone)
+
+
     def milestones(self):
         """
         Return the milestones in the space
         """
-        if not self.cache['milestones']:
-            self.cache['milestones'] = self._milestones()
-        return self.cache['milestones']
+        if not self.cache.get('milestones'):
+            self.cache['milestones'] = self._get_milestones()
+        return self.cache.get('milestones')
 
     def milestone(self, **kwargs):
         """
         Return the milestone with attributes matching the keyword arguments
         passed in.
 
-        Ex:
-            ```
-            milestone(id=1, name='my milestone')
-            ```
-            returns the milestone with matching attributes
+        Ex: ```space.milestone(name='my milestone')```
         """
         return self._filter(self.milestones(), **kwargs)
 
-    def _tickets(self):
+    def _get_tickets(self):
         """
-        Returns a list of Ticket instances created from the API
+        Harvests the space's tickets from the API
         """
-        url = Ticket(space=self).list_url()
-        raw_data = self._harvest(url=url)
-        return [
-            Ticket(
-                space=self,
-                initialise_with=data[1]
-                ) for data in raw_data
-            ]
+        return self._harvest_child_objects(Ticket)
 
     def tickets(self):
         """
         Return the tickets in the space
         """
-        if not self.cache['tickets']:
-            self.cache['tickets'] = self._tickets()
-        return self.cache['tickets']
+        if not self.cache.get('tickets'):
+            self.cache['tickets'] = self._get_tickets()
+        return self.cache.get('tickets')
 
 
     def ticket(self, **kwargs):
@@ -122,34 +127,23 @@ class Space(AssemblaObject):
         Return the ticket with attributes matching the keyword arguments passed
         in.
 
-        Ex:
-            ```
-            ticket(id=1, name='my ticket')
-            ```
-            returns the ticket with matching attributes
+        Ex: ```space.ticket(number=51)```
         """
         return self._filter(self.tickets(), **kwargs)
 
-    def _users(self):
+    def _get_users(self):
         """
-        Returns a list of User instances created from the API
+        Harvests the space's users from the API
         """
-        url = User(space=self).list_url()
-        raw_data = self._harvest(url=url)
-        return [
-            User(
-                space=self,
-                initialise_with=data[1]
-                ) for data in raw_data
-            ]
+        return self._harvest_child_objects(User)
 
     def users(self):
         """
         Return the users in the space
         """
-        if not self.cache['users']:
-            self.cache['users'] = self._users()
-        return self.cache['users']
+        if not self.cache.get('users'):
+            self.cache['users'] = self._get_users()
+        return self.cache.get('users')
 
 
     def user(self, **kwargs):
@@ -157,11 +151,7 @@ class Space(AssemblaObject):
         Return the user with attributes matching the keyword arguments passed
         in.
 
-        Ex:
-            ```
-            user(id=1, name='John Smith')
-            ```
-            returns the user with matching attributes
+        Ex: ```space.user(name='John Smith')```
         """
         return self._filter(self.users(), **kwargs)
 
@@ -169,6 +159,7 @@ class Space(AssemblaObject):
 class Milestone(AssemblaObject):
     class Meta(APIObject.Meta):
         primary_key = 'id'
+        secondary_key = 'description'
         relative_url = 'spaces/{space}/milestones/{pk}'
         relative_list_url = 'spaces/{space}/milestones'
 
@@ -186,11 +177,7 @@ class Milestone(AssemblaObject):
         Return the ticket with attributes matching the keyword arguments
         passed in.
 
-        Ex:
-            ```
-            ticket(id=1, name='my ticket')
-            ```
-            returns the ticket with matching attributes
+        Ex: ```milestone.ticket(assigned_to_id=some_user.id)```
         """
         return self._filter(self.tickets(), **kwargs)
 
@@ -198,6 +185,7 @@ class Milestone(AssemblaObject):
 class User(AssemblaObject):
     class Meta(APIObject.Meta):
         primary_key = 'id'
+        secondary_key = 'name'
         relative_url = 'profile/{pk}'
         relative_list_url = 'spaces/{space}/users'
 
@@ -215,11 +203,7 @@ class User(AssemblaObject):
         Return the ticket with attributes matching the keyword arguments
         passed in.
 
-        Ex:
-            ```
-            ticket(id=1, name='my ticket')
-            ```
-            returns the ticket with matching attributes
+        Ex: ```user.ticket(status_name='Accepted')```
         """
         return self._filter(self.tickets(), **kwargs)
 
