@@ -4,10 +4,7 @@ from error import AssemblaError
 
 class API(APIObject):
 
-    class Meta(APIObject.Meta):
-        cache_schema = ('spaces',)
-
-    def __init__(self, auth=None, *args, **kwargs):
+    def __init__(self, auth=None, use_cache=True, *args, **kwargs):
         """
         :auth is a required argument which should be in the format:
             `('Username', 'Password',)`
@@ -16,8 +13,7 @@ class API(APIObject):
         if not auth:
             raise AssemblaError(100)
         self.auth = auth
-        # Responses are cached, call ```API.cache.flush()``` to purge any old data.
-        self.cache = Cache(self.Meta.cache_schema)
+        self.use_cache = use_cache
 
     def __str__(self):
         return 'Assembla API'
@@ -39,26 +35,25 @@ class API(APIObject):
         return [
             Space(
                 auth=self.auth,
+                use_cache=self.use_cache,
                 initialise_with=data[1]
                 ) for data in raw_data
             ]
     
     def spaces(self):
         """
-        Return the spaces available to the user
+        Returns the spaces available to the user
         """
-        if not self.cache['spaces']:
-            self.cache['spaces'] = self._get_spaces()
-        return self.cache['spaces']
+        return self._get_spaces()
 
     def space(self, **kwargs):
         """
-        Return the space with attributes matching the keyword arguments passed
+        Returns the space with attributes matching the keyword arguments passed
         in.
 
         Ex: ```api.space(name='my space')```
         """
-        return self._filter(self.spaces(), **kwargs)
+        return self._get(self.spaces(), **kwargs)
 
 
 class Space(AssemblaObject):
@@ -83,29 +78,43 @@ class Space(AssemblaObject):
                 ) for data in raw_data
             ]
 
+    def _get_from_cache(self, child):
+        """
+        Returns the cached data for the space's children denoted by :child.
+
+        If the cache has no data for :child, the cache is updated and cached
+        data is returned.
+
+        If the cache has been deactivated, the data is freshly harvested from
+        the API and returned.
+        """
+        child_func = getattr(self, '_get_{0}'.format(child))
+        if not self.cache.cache_responses:
+            return child_func()
+        if not self.cache.get(child):
+            self.cache[child] = child_func()
+        return self.cache.get(child)
+
     def _get_milestones(self):
         """
         Harvests the space's milestones from the API
         """
         return self._harvest_child_objects(Milestone)
 
-
     def milestones(self):
         """
-        Return the milestones in the space
+        Returns the milestones in the space
         """
-        if not self.cache.get('milestones'):
-            self.cache['milestones'] = self._get_milestones()
-        return self.cache.get('milestones')
+        return self._get_from_cache('milestones')
 
     def milestone(self, **kwargs):
         """
-        Return the milestone with attributes matching the keyword arguments
+        Returns the milestone with attributes matching the keyword arguments
         passed in.
 
         Ex: ```space.milestone(name='my milestone')```
         """
-        return self._filter(self.milestones(), **kwargs)
+        return self._get(self.milestones(), **kwargs)
 
     def _get_tickets(self):
         """
@@ -115,21 +124,19 @@ class Space(AssemblaObject):
 
     def tickets(self):
         """
-        Return the tickets in the space
+        Returns the tickets in the space
         """
-        if not self.cache.get('tickets'):
-            self.cache['tickets'] = self._get_tickets()
-        return self.cache.get('tickets')
+        return self._get_from_cache('tickets')
 
 
     def ticket(self, **kwargs):
         """
-        Return the ticket with attributes matching the keyword arguments passed
+        Returns the ticket with attributes matching the keyword arguments passed
         in.
 
         Ex: ```space.ticket(number=51)```
         """
-        return self._filter(self.tickets(), **kwargs)
+        return self._get(self.tickets(), **kwargs)
 
     def _get_users(self):
         """
@@ -139,21 +146,19 @@ class Space(AssemblaObject):
 
     def users(self):
         """
-        Return the users in the space
+        Returns the users in the space
         """
-        if not self.cache.get('users'):
-            self.cache['users'] = self._get_users()
-        return self.cache.get('users')
+        return self._get_from_cache('users')
 
 
     def user(self, **kwargs):
         """
-        Return the user with attributes matching the keyword arguments passed
+        Returns the user with attributes matching the keyword arguments passed
         in.
 
         Ex: ```space.user(name='John Smith')```
         """
-        return self._filter(self.users(), **kwargs)
+        return self._get(self.users(), **kwargs)
 
 
 class Milestone(AssemblaObject):
@@ -165,21 +170,18 @@ class Milestone(AssemblaObject):
 
     def tickets(self):
         """
-        Return the tickets in the milestone
+        Returns the tickets in the milestone
         """
-        return filter(
-            lambda ticket: ticket.milestone_id == self.id,
-            self.space.tickets(),
-            )
+        return self._filter(self.space.tickets(), milestone_id=self.id)
 
     def ticket(self, **kwargs):
         """
-        Return the ticket with attributes matching the keyword arguments
+        Returns the ticket with attributes matching the keyword arguments
         passed in.
 
         Ex: ```milestone.ticket(assigned_to_id=some_user.id)```
         """
-        return self._filter(self.tickets(), **kwargs)
+        return self._get(self.tickets(), **kwargs)
 
 
 class User(AssemblaObject):
@@ -191,21 +193,18 @@ class User(AssemblaObject):
 
     def tickets(self):
         """
-        Return the tickets in the space which are assigned to the user
+        Returns the tickets in the space which are assigned to the user
         """
-        return filter(
-            lambda ticket: ticket.assigned_to_id == self.id,
-            self.space.tickets(),
-            )
+        return self._filter(self.space.tickets(), assigned_to_id=self.id)
 
     def ticket(self, **kwargs):
         """
-        Return the ticket with attributes matching the keyword arguments
+        Returns the ticket with attributes matching the keyword arguments
         passed in.
 
         Ex: ```user.ticket(status_name='Accepted')```
         """
-        return self._filter(self.tickets(), **kwargs)
+        return self._get(self.tickets(), **kwargs)
 
 
 class Ticket(AssemblaObject):

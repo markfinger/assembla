@@ -174,6 +174,20 @@ class APIObject(object):
                 for element in tree.getroot().getchildren()
             ]
 
+    def _get(self, data, **kwargs):
+        """
+        Retrieve a single object from :data, where the objects in it which
+        possess attributes equal in name/value to a key/value in kwargs.
+
+        Primary difference from _filter is that it will raise Exceptions if
+        multiple objects are found
+        """
+        results = self._filter(data, **kwargs)
+        if len(results) == 1:
+            return results[0]
+        elif len(results) > 1:
+            raise AssemblaError(210, arguments=kwargs)
+
     def _filter(self, data, **kwargs):
         """
         Filters :data for the objects in it which possess attributes equal in
@@ -201,7 +215,7 @@ class APIObject(object):
         """
         if not kwargs:
             raise AssemblaError(220)
-        results = filter(
+        return filter(
             lambda object: len(kwargs) == len(
                 filter(
                     lambda element: element == True,
@@ -210,13 +224,7 @@ class APIObject(object):
                     )
                 ),
             data
-        )
-        if len(results) == 1:
-            return results[0]
-        elif len(results) > 1:
-            raise AssemblaError(210, arguments=kwargs)
-        else:
-            return None
+            )
 
 
 class AssemblaObject(APIObject):
@@ -243,7 +251,7 @@ class AssemblaObject(APIObject):
     If the subclass has had a cache schema defined in Meta, the constructor will
     instantiate a Cache object for it.
     """
-    def __init__(self, initialise_with={}, **kwargs):
+    def __init__(self, initialise_with={}, use_cache=True, **kwargs):
         # :initialise_with's assignments are kept before the :kwargs assignments
         # as :kwargs' values take precedence
         for attr_name, value in initialise_with.iteritems():
@@ -253,7 +261,13 @@ class AssemblaObject(APIObject):
         if hasattr(self.Meta, 'cache_schema'):
             # Responses will be cached.
             # Call ```space.cache.clear()``` to purge all data from the cache
-            self.cache = Cache(self.Meta.cache_schema)
+            self.cache = Cache(
+                parent=self,
+                schema=self.Meta.cache_schema,
+                use_cache=use_cache,
+            )
+            if not use_cache:
+                self.cache.deactivate()
 
 
 class Cache(MutableMapping):
@@ -269,11 +283,13 @@ class Cache(MutableMapping):
     requests will return fresh data from Assembla.
     """
 
-    def __init__(self, schema):
+    def __init__(self, parent, schema, use_cache=True):
         self.store = dict()
         self.schema = schema
         # Initiate the cache, using :schema
         self.clear()
+        self.cache_responses = use_cache
+        self.parent = parent
 
     def __setitem__(self, key, value):
         self.store[key] = value
@@ -296,6 +312,12 @@ class Cache(MutableMapping):
 
     def __len__(self):
         return len(self.store)
+
+    def activate(self):
+        self.cache_responses = True
+
+    def deactivate(self):
+        self.cache_responses = False
 
     def clear(self):
         """
