@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name = "assembla",
-    version = "1.1.1",
+    version = "1.1.2",
     packages = find_packages(),
 
     install_requires = [
