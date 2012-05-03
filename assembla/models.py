@@ -53,6 +53,22 @@ class API(APIObject):
         """
         return self._get(self.spaces(), **kwargs)
 
+    def _get_tasks(self):
+        raw_data = self._harvest(url=Task().list_url(), auth=self.auth)
+        return [
+            Task(
+                auth=self.auth,
+                use_cache=self.use_cache,
+                initialise_with=data[1]
+                ) for data in raw_data
+            ]
+
+    def tasks(self):
+        """
+        Returns the time entries for the user.
+        """
+        return self._get_tasks()
+
 
 class Space(AssemblaObject):
 
@@ -93,7 +109,6 @@ class Space(AssemblaObject):
             return self.cache.get(child)
         else:
             return child_func()
-
 
     def _get_milestones(self):
         """
@@ -158,7 +173,6 @@ class Space(AssemblaObject):
             **kwargs
             )
 
-
     def user(self, **kwargs):
         """
         Returns the user with attributes matching the keyword arguments passed
@@ -220,3 +234,10 @@ class Ticket(AssemblaObject):
         primary_key = 'number'
         relative_url = 'spaces/{space}/tickets/{pk}'
         relative_list_url = 'spaces/{space}/tickets'
+
+
+class Task(AssemblaObject):
+    class Meta(APIObject.Meta):
+        primary_key = 'id'
+        relative_url = 'user/time_entries/{pk}'
+        relative_list_url = 'user/time_entries'
