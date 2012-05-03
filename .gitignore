@@ -1,3 +1,4 @@
 auth.py
 *.pyc
 .idea
+venv
