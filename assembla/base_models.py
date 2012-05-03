@@ -153,6 +153,8 @@ class APIObject(object):
                     }[value]
             elif type == 'integer':
                 return int(value)
+            elif type == 'float':
+                return float(value)
         else:
             return value
 
