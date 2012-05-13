@@ -85,6 +85,7 @@ class API(APIObject):
         """
         return self._get_events()
 
+
 class Space(AssemblaObject):
 
     class Meta(APIObject.Meta):
@@ -256,6 +257,7 @@ class Task(AssemblaObject):
         primary_key = 'id'
         relative_url = 'user/time_entries/{pk}'
         relative_list_url = 'user/time_entries'
+
 
 class Stream(AssemblaObject):
     class Meta(APIObject.Meta):
