@@ -69,6 +69,21 @@ class API(APIObject):
         """
         return self._get_tasks()
 
+    def _get_events(self):
+        raw_data = self._harvest(url=Stream().list_url(), auth=self.auth)
+        return [
+            Stream(
+                auth=self.auth,
+                use_cache=self.use_cache,
+                initialise_with=data[1]
+                ) for data in raw_data
+            ]
+
+    def events(self):
+        """
+        Returns the time entries for the user.
+        """
+        return self._get_events()
 
 class Space(AssemblaObject):
 
@@ -241,3 +256,8 @@ class Task(AssemblaObject):
         primary_key = 'id'
         relative_url = 'user/time_entries/{pk}'
         relative_list_url = 'user/time_entries'
+
+class Stream(AssemblaObject):
+    class Meta(APIObject.Meta):
+        primary_key = 'id'
+        relative_list_url = 'activity'
