@@ -71,10 +71,6 @@ class TestAssembla:
         # Required attributes
         assert obj.name is not None
         assert obj.wiki_name is not None
-        # Despite this being a required field, it doesn't seem to be sent
-        # back from the API. Leaving it in here in case it's just temporary
-        # bug.
-        # assert obj.wiki_format is not None
         assert obj.team_permissions is not None
         assert obj.public_permissions is not None
         # Check that fields have been converted to Python types
@@ -87,19 +83,43 @@ class TestAssembla:
         assert type(obj.is_manager) is bool
         return True
 
-    def test_spaces_returns_mulitple_objects_of_type_space(self):
+    def __test_event_type(self, obj):
+        assert type(obj) is Event
+        # Required attributes
+        assert obj.date is not None
+        assert obj.operation is not None
+        assert obj.url is not None
+        assert obj.title is not None
+        return True
+
+    def __test_task_type(self, obj):
+        assert type(obj) is Task
+        # Required attributes
+        assert obj.hours is not None
+        assert obj.description is not None
+        assert obj.space_id is not None
+        assert obj.begin_at is not None
+        assert obj.end_at is not None
+        # Check that fields have been converted to Python types
+        assert type(obj.hours) is float
+        assert type(obj.begin_at) is datetime
+        assert type(obj.end_at) is datetime
+        return True
+
+    def test_spaces_returns_multiple_objects_of_type_space(self):
         assert len(self.spaces) > 0
         for space in self.spaces:
             assert self.__test_space_type(space)
 
-    def test_space_returns_type_space(self):
-        space = self.assembla.space(
-            id=self.spaces[0].id,
-            wiki_name=self.spaces[0].wiki_name,
-        )
-        assert space.id == self.spaces[0].id
-        assert space.wiki_name == self.spaces[0].wiki_name
-        assert self.__test_space_type(space)
+    def test_events_returns_multiple_objects_of_type_space(self):
+        assert len(self.assembla.events()) > 0
+        for events in self.assembla.events():
+            assert self.__test_event_type(events)
+
+    def test_tasks_returns_multiple_objects_of_type_space(self):
+        assert len(self.assembla.events()) > 0
+        for task in self.assembla.tasks():
+            assert self.__test_task_type(task)
 
     def test_bad_url_for_get_xml_tree(self):
         try:
@@ -139,14 +159,14 @@ class TestAssembla:
     def test_space_urls(self):
         space = Space()
         setattr(space, space.Meta.primary_key, 'test_space_pk')
-        assert space.url() == 'https://www.assembla.com/spaces/test_space_pk'
-        assert space.list_url() == 'https://www.assembla.com/spaces/my_spaces'
+        assert space._url() == 'https://www.assembla.com/spaces/test_space_pk'
+        assert space._list_url() == 'https://www.assembla.com/spaces/my_spaces'
 
     def __test_milestone_type(self, milestone):
         assert type(milestone) is Milestone
         assert type(milestone.space) is Space
         assert milestone.space_id == self.space.id
-        assert milestone.space.pk() == self.space.pk()
+        assert milestone.space._pk() == self.space._pk()
         # Required attributes
         assert milestone.title is not None
         # Check that fields have been converted to Python types
@@ -162,7 +182,7 @@ class TestAssembla:
         assert type(ticket) is Ticket
         assert type(ticket.space) is Space
         assert ticket.space_id == self.space.id
-        assert ticket.space.pk() == self.space.pk()
+        assert ticket.space._pk() == self.space._pk()
         # Required attributes
         assert ticket.number is not None
         assert ticket.summary is not None
@@ -180,7 +200,7 @@ class TestAssembla:
     def __test_user_type(self, user):
         assert type(user) is User
         assert type(user.space) is Space
-        assert user.space.pk() == self.space.pk()
+        assert user.space._pk() == self.space._pk()
         # Required attributes
         assert user.login is not None
         assert user.id is not None
@@ -201,21 +221,21 @@ class TestAssembla:
 
     def test_child_singleton_functions_return_the_correct_types(self):
         milestone = self.space.milestone(
-            **{Milestone.Meta.primary_key:self.space.milestones()[0].pk()}
+            **{Milestone.Meta.primary_key:self.space.milestones()[0]._pk()}
         )
-        assert milestone.pk() == self.space.milestones()[0].pk()
+        assert milestone._pk() == self.space.milestones()[0]._pk()
         assert self.__test_milestone_type(milestone)
 
         ticket = self.space.ticket(
-            **{Ticket.Meta.primary_key:self.space.tickets()[0].pk()}
+            **{Ticket.Meta.primary_key:self.space.tickets()[0]._pk()}
         )
-        assert ticket.pk() == self.space.tickets()[0].pk()
+        assert ticket._pk() == self.space.tickets()[0]._pk()
         assert self.__test_ticket_type(ticket)
 
         user = self.space.user(
-            **{User.Meta.primary_key:self.space.users()[0].pk()}
+            **{User.Meta.primary_key:self.space.users()[0]._pk()}
         )
-        assert user.pk() == self.space.users()[0].pk()
+        assert user._pk() == self.space.users()[0]._pk()
         assert self.__test_user_type(user)
 
     ###################################
@@ -238,14 +258,14 @@ class TestAssembla:
         milestone = Milestone()
         milestone.space = space
         setattr(milestone, milestone.Meta.primary_key, 'test_milestone_pk')
-        assert milestone.url() == 'https://www.assembla.com/spaces/test_space_pk/milestones/test_milestone_pk'
+        assert milestone._url() == 'https://www.assembla.com/spaces/test_space_pk/milestones/test_milestone_pk'
 
     def test_milestone_child_functions_returns_mulitple_objects_of_the_correct_type(self):
         for ticket in self.milestone.tickets():
             assert type(ticket) is Ticket
             assert type(ticket.space) is Space
             assert ticket.space_id == self.space.id
-            assert ticket.space.pk() == self.space.pk()
+            assert ticket.space._pk() == self.space._pk()
             assert ticket.milestone_id == self.milestone.id
             # Required attributes
             assert ticket.number is not None
@@ -281,15 +301,15 @@ class TestAssembla:
         user = User()
         user.space = space
         setattr(user, user.Meta.primary_key, 'test_pk')
-        assert user.url() == 'https://www.assembla.com/profile/test_pk'
-        assert user.list_url() == 'https://www.assembla.com/spaces/test_space_pk/users'
+        assert user._url() == 'https://www.assembla.com/profile/test_pk'
+        assert user._list_url() == 'https://www.assembla.com/spaces/test_space_pk/users'
 
     def test_user_child_functions_returns_mulitple_objects_of_the_correct_type(self):
         for ticket in self.user.tickets():
             assert type(ticket) is Ticket
             assert type(ticket.space) is Space
             assert ticket.space_id == self.space.id
-            assert ticket.space.pk() == self.space.pk()
+            assert ticket.space._pk() == self.space._pk()
             assert ticket.assigned_to_id == self.user.id
             # Required attributes
             assert ticket.number is not None
@@ -308,7 +328,7 @@ class TestAssembla:
         for user in self.space.users():
             assert type(user) is User
             assert type(user.space) is Space
-            assert user.space.pk() == self.space.pk()
+            assert user.space._pk() == self.space._pk()
             # Required attributes
             assert user.login is not None
             assert user.id is not None
@@ -331,7 +351,7 @@ class TestAssembla:
         ticket = Ticket()
         ticket.space = space
         setattr(ticket, ticket.Meta.primary_key, 'test_ticket_pk')
-        assert ticket.url() == 'https://www.assembla.com/spaces/test_space_pk/tickets/test_ticket_pk'
+        assert ticket._url() == 'https://www.assembla.com/spaces/test_space_pk/tickets/test_ticket_pk'
 
     ###################################
     #             ERROR HANDLING      #

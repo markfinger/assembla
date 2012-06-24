@@ -121,7 +121,7 @@ requests to Assembla. By default, it is activated. You can deactivate it::
 	space.cache.deactivate()
 
 	# Deactivate the cache for all spaces instantiated from `assembla`
-	assembla = API(auth=('Username', 'Password',), use_cache=False)
+	assembla = API(auth=('Username', 'Password',), cache_responses=False)
 
 If you want to purge stale data from a space's cache and begin refilling it::
 

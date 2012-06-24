@@ -1,7 +1,5 @@
-from copy import deepcopy
 from StringIO import StringIO
 from datetime import date, datetime
-from collections import MutableMapping
 
 import requests
 from lxml import etree
@@ -13,7 +11,6 @@ class APIObject(object):
     """
     Base object for representations of objects on Assembla.
     """
-
     class Meta:
         """
         Descriptive fields for models
@@ -37,10 +34,10 @@ class APIObject(object):
     def __str__(self):
         return '{0}: {1}'.format(
             self.__class__.__name__,
-            getattr(self, self.Meta.secondary_key, None) or self.pk()
+            getattr(self, self.Meta.secondary_key, None) or self._pk()
             )
 
-    def pk(self):
+    def _pk(self):
         """
         Returns the value of the attribute denoted by self.primary_key
         """
@@ -48,17 +45,17 @@ class APIObject(object):
 
     def _safe_pk(self):
         """
-        Safer variant of self.pk(). Care should be used, as it suppresses
+        Safer variant of self._pk(). Care should be used, as it suppresses
         errors.
         """
         try:
-            return self.pk()
+            return self._pk()
         except AttributeError:
             pass
 
-    def url(self, base_url=None, relative_url=None):
+    def _url(self, base_url=None, relative_url=None):
         """
-        Generates an absolute url to a model's instance in the API.
+        Generates an absolute _url to a model's instance in the API.
         """
         return ''.join([
             base_url or self.Meta.base_url,
@@ -71,11 +68,11 @@ class APIObject(object):
                 'pk': self._safe_pk(),
                 })
 
-    def list_url(self):
+    def _list_url(self):
         """
-        Generates an absolute url to a list of the model's type on the API.
+        Generates an absolute _url to a list of the model's type on the API.
         """
-        return self.url(relative_url=self.Meta.relative_list_url)
+        return self._url(relative_url=self.Meta.relative_list_url)
 
     def _get_pk_of_attr(self, attr, default=None):
         """
@@ -90,21 +87,21 @@ class APIObject(object):
             self._get_pk('space')
             ```
             attempts to return the primary key of the space attribute;
-            equivalent to self.space.pk.
+            equivalent to self.space._pk.
         """
         return getattr(
             # Get the attribute specified by :attr
             getattr(self, attr, default),
             # Get the primary key function
-            'pk',
+            '_pk',
             # In case we are getting back None, wrap it up in a lambda so we
             # can safely call the result
             lambda: default
-            )() # Need to execute either .pk or the lambda
+            )() # Need to execute either ._pk or the lambda
 
     def _get_xml_tree(self, url, auth):
         """
-        Returns the XML representation of :url as an lxml etree.
+        Returns the XML representation of :_url as an lxml etree.
         """
         headers = {'Accept': 'application/xml'}
         session = requests.session(auth=auth, headers=headers)
@@ -166,7 +163,7 @@ class APIObject(object):
 
     def _harvest(self, url, auth):
         """
-        Returns :url as a dict
+        Returns :_url as a dict
         """
         tree = self._get_xml_tree(url, auth)
         return [
@@ -225,109 +222,3 @@ class APIObject(object):
                 ),
             data
             )
-
-
-class AssemblaObject(APIObject):
-    """
-    Adds a constructor which assigns attributes to the subclass based on
-    corresponding keys and values from :initialise_with. Additionally, any key
-    word arguments passed into the constructor will be assigned to the subclass.
-
-    Ex: ```
-        class SomeClass(AssemblaObject):
-            pass
-
-        some_class = SomeClass(
-            initialise_with={'some_attribute': True},
-            some_other_attribute=False,
-            )
-        ````
-        creates an instance of SomeClass with the attributes
-        'some_attribute' == True and 'some_other_attribute' == False.
-
-    Note that the values of keyword arguments passed in can overwrite
-    the values of similarly named keys from :initialise_with
-
-    If the subclass has had a cache schema defined in Meta, the constructor will
-    instantiate a Cache object for it.
-    """
-    def __init__(self, initialise_with=None, use_cache=True, **kwargs):
-        # :initialise_with's assignments are kept before the :kwargs assignments
-        # as :kwargs' values take precedence
-        if not initialise_with: initialise_with = {}
-        for attr_name, value in initialise_with.iteritems():
-            setattr(self, attr_name, value)
-        for attr_name, value in kwargs.iteritems():
-            setattr(self, attr_name, value)
-        if hasattr(self.Meta, 'cache_schema'):
-            # Responses will be cached.
-            # Call ```space.cache.purge()``` to purge all data from the cache
-            self.cache = Cache(
-                parent=self,
-                schema=self.Meta.cache_schema,
-                use_cache=use_cache,
-            )
-            if not use_cache:
-                self.cache.deactivate()
-
-
-class Cache(MutableMapping):
-    """
-    In-memory Cache storage. Reduces overheads on repeated requests, at the cost
-    that some responses may have outdated data.
-
-    Generally the cache will try to return copies of objects, rather than the
-    objects themselves. This is to maintain a semi-immutable cache resembling
-    the API as closely as possible.
-
-    Call ```Cache.purge()``` to purge any data, any subsequent
-    requests will return fresh data from Assembla.
-    """
-
-    def __init__(self, parent, schema, use_cache=True):
-        self.store = dict()
-        self.schema = schema
-        # Initiate the cache, using :schema
-        self.clear()
-        self.cache_responses = use_cache
-        self.parent = parent
-
-    def __setitem__(self, key, value):
-        self.store[key] = value
-    set = __setitem__
-
-    def __getitem__(self, item):
-        """
-        Return a copy of an item, rather than the actual item.
-
-        The cache stores lists of objects, rather than returning the object
-        directly, this traverses the stored list and returns deep copies of each
-        object.
-        """
-        return map(deepcopy, self.store[item])
-
-    def __delitem__(self, key):
-        del self.store.pop[key]
-
-    def __iter__(self):
-        return iter(self.store)
-
-    def __len__(self):
-        return len(self.store)
-
-    def has_cached(self, item):
-        return True if self.store.has_key(item) and self.store[item] is not None else False
-
-    def activate(self):
-        self.cache_responses = True
-
-    def deactivate(self):
-        self.cache_responses = False
-
-    def purge(self):
-        """
-        Purges the cache of any data it may have by reinstantiating itself from
-        the schema
-        """
-        self.store.clear()
-        map(lambda name: self.__setitem__(name, []), self.schema)
