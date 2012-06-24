@@ -132,8 +132,8 @@ If you want to purge stale data from a space's cache and begin refilling it::
 
 Contributors
 ------------
-Mark Finger - http://github.com/markfinger
-Venkata Ramana - http://github.com/arjunc77
+- Mark Finger - http://github.com/markfinger
+- Venkata Ramana - http://github.com/arjunc77
 
 Source
 ------
