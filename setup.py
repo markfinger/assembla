@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name = "assembla",
-    version = "1.1.2",
+    version = "1.2.0",
     packages = find_packages(),
 
     install_requires = [
@@ -33,7 +33,7 @@ setup(
     platforms=['any'],
     keywords = "Assembla API",
     url = "https://github.com/markfinger/assembla/",
-    long_description = read('README.rst'),
+    long_description = read('PYPI_README.rst'),
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
