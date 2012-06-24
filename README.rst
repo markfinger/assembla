@@ -116,6 +116,7 @@ Caching
 -------
 Spaces have an in-memory caching system, which reduces the overheard on repeated
 requests to Assembla. By default, it is activated. You can deactivate it::
+::
 
 	# Deactivate the cache for a space, all subsequent requests will return fresh data
 	space.cache.deactivate()
@@ -124,8 +125,16 @@ requests to Assembla. By default, it is activated. You can deactivate it::
 	assembla = API(auth=('Username', 'Password',), use_cache=False)
 
 If you want to purge stale data from a space's cache and begin refilling it::
+::
 
 	# Purge stale data from the space's cache, any subsequent request will update the cache
 	space.cache.purge()
 
-Source: https://github.com/markfinger/assembla
+Contributors
+------------
+Mark Finger - http://github.com/markfinger
+Venkata Ramana - http://github.com/arjunc77
+
+Source
+------
+http://github.com/markfinger/assembla
