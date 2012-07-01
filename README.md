@@ -136,10 +136,13 @@ The API wrapper uses an in-memory caching system to reduce the overheard on
 repeated requests to Assembla.
 
 The cache is activated by default, but you can deactivate it when instantiating
-the wrapper:
+the wrapper by passing `cache_responses=False`:
 
 ```python
-assembla = API(auth=('Username', 'Password',), cache_responses=False)
+assembla = API(
+	...,
+	cache_responses=False
+)
 ```
 
 
