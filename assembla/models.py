@@ -28,7 +28,7 @@ class API(AssemblaObject, CachesRequests):
 
     def _harvest_child_objects(self, child_class):
         """
-        Harvests and returns the API's objects matching :child_class.
+        Returns the API's objects matching :child_class.
         """
         url = child_class()._list_url()
         raw_data = self._harvest(url=url, auth=self.auth)
@@ -42,7 +42,7 @@ class API(AssemblaObject, CachesRequests):
 
     def _get_spaces(self):
         """
-        Harvests the authenticated user's spaces from the API
+        Returns the authenticated user's spaces from the API
         """
         return self._harvest_child_objects(Space)
 
@@ -66,7 +66,7 @@ class API(AssemblaObject, CachesRequests):
 
     def _get_tasks(self):
         """
-        Harvests the authenticated user's tasks from the API
+        Returns the authenticated user's tasks from the API
         """
         return self._harvest_child_objects(Task)
 
@@ -90,7 +90,7 @@ class API(AssemblaObject, CachesRequests):
 
     def _get_events(self):
         """
-        Harvests the authenticated user's stream from the API
+        Returns the authenticated user's stream from the API
         """
         return self._harvest_child_objects(Event)
 
@@ -123,7 +123,7 @@ class Space(AssemblaObject, InitialiseWith, CachesRequests):
 
     def _harvest_child_objects(self, child_class):
         """
-        Harvests and returns the space's objects matching :child_class.
+        Returns the space's objects matching :child_class.
         """
         space = getattr(self, 'space', self)
         url = child_class(space=space)._list_url()
@@ -137,7 +137,7 @@ class Space(AssemblaObject, InitialiseWith, CachesRequests):
 
     def _get_milestones(self):
         """
-        Harvests the space's milestones from the API
+        Returns the space's milestones from the API
         """
         return self._harvest_child_objects(Milestone)
 
@@ -161,7 +161,7 @@ class Space(AssemblaObject, InitialiseWith, CachesRequests):
 
     def _get_tickets(self):
         """
-        Harvests the space's tickets from the API
+        Returns the space's tickets from the API
         """
         return self._harvest_child_objects(Ticket)
 
@@ -185,7 +185,7 @@ class Space(AssemblaObject, InitialiseWith, CachesRequests):
 
     def _get_users(self):
         """
-        Harvests the space's users from the API
+        Returns the space's users from the API
         """
         return self._harvest_child_objects(User)
 
