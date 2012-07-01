@@ -20,7 +20,10 @@ Basic Example
 ```python
 from assembla import API
 
-assembla = API(auth=('Username', 'Password',))
+assembla = API((
+	'' # Username,
+	'' # Password,
+))
 
 print assembla.space(name='Big Project').ticket(number=201).status_name
 ```
