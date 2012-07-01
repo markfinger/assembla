@@ -118,8 +118,8 @@ Model Reference
 --------------------------------------------------
 
 All models (Space, Milestone, User and Ticket) are returned with fields corresponding
-to the data from Assembla. Naming conventions generally follow Assembla's `API
-Reference <http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API>`_.
+to the data from Assembla. Naming conventions generally follow Assembla's
+[API Reference](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API>).
 Where possible, values are coerced to native Python types.
 
 
