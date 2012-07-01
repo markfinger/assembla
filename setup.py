@@ -26,7 +26,7 @@ Full documentation at http://github.com/markfinger/assembla
 
 setup(
     name = 'assembla',
-    version = '1.2.2',
+    version = '1.2.3',
     packages = find_packages(),
 
     install_requires = [
