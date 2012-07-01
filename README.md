@@ -20,10 +20,13 @@ Basic Example
 ```python
 from assembla import API
 
-assembla = API((
+# Authenticate using your normal Assembla Username and Password
+auth = (
 	'' # Username,
 	'' # Password,
-))
+)
+
+assembla = API(auth)
 
 print assembla.space(name='Big Project').ticket(number=201).status_name
 ```
@@ -44,7 +47,7 @@ The *big* downside is that it causes some data to be non-trivial to retrieve.
 For example: every ticket assigned to one user across Assembla:
 
 ```python
-user = assembla.space(name='Big Project').user(name='John Smith')
+user = assembla.space(name='My Project').user(name='John Smith')
 tickets = []
 
 for space in assembla.spaces():
@@ -69,7 +72,7 @@ Examples for Spaces
 spaces = assembla.spaces()
 
 # Select a specific space
-space = assembla.space(name='Big Project')
+space = assembla.space(name='My Project')
 
 # Retrieve the space's milestones
 milestones = space.milestones()
@@ -99,7 +102,7 @@ Examples for Milestones
 
 ```python
 # Select a specific milestone
-milestone = assembla.space(name='Big Project').milestone('Release Candidate 1')
+milestone = assembla.space(name='My Project').milestone('Release Candidate 1')
 
 # Retrieve the milestone's tickets
 tickets = milestone.tickets()
@@ -120,7 +123,7 @@ Examples for Users
 
 ```python
 # Select a specific user
-user = assembla.space(name='Big Project').user(name='John Smith')
+user = assembla.space(name='My Project').user(name='John Smith')
 
 # Retrieve the user's tickets
 tickets = user.tickets()

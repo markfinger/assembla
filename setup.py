@@ -1,6 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
+
 PYPI_RESTRUCTURED_TEXT_INFO = \
 """
 Basic Example
@@ -10,10 +11,12 @@ Basic Example
 
 	from assembla import API
 
-	assembla = API((
-        '', # Username
-        '', # Password
-    ))
+	auth = (
+	    '' # username,
+	    '' # password,
+	)
+
+	assembla = API(auth)
 
 	print assembla.space(name='Big Project').ticket(number=201).status_name
 
