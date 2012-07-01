@@ -215,12 +215,14 @@ class APIObject(object):
         _filter will throw an AttributeError if any of the kwargs are not
         possessed by the objects in the iterable. While it might seem to be
         easier to wrap the comparisons in a try/except, it would come at the
-        cost of reducing the transparency behind _filter's behaviour
+        cost of the transparency when a user enters a typo for an argument name
         """
         return filter(
+            # Find the objects who have an equal number of matching attr/value
+            # combinations as `len(kwargs)`
             lambda object: len(kwargs) == len(
                 filter(
-                    lambda element: element == True,
+                    lambda boolean: boolean,
                     [getattr(object, attr_name) == value
                         for attr_name, value in kwargs.iteritems()]
                 )
