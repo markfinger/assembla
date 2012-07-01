@@ -164,7 +164,8 @@ While naming conventions generally follow Assembla's
 one difference is that dashes are replaced with underscores, so
 `status-name` would become `status_name`.
 
-Where possible, values are coerced to native Python types.
+Where possible, values are coerced to native Python types, eg: dates are parsed
+as as `datetime.datetime` objects.
 
 
 Caching
