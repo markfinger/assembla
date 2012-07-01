@@ -1,6 +1,6 @@
-====================================================
-Assembla: Python wrapper for Assembla's RESTful API
-====================================================
+===============================================================
+Python wrapper for the Assembla API
+===============================================================
 
 An easy to use wrapper around the Assembla API.
 
@@ -11,6 +11,7 @@ An easy to use wrapper around the Assembla API.
 - [Examples for Tickets](#examples-for-tickets)
 - [Model Reference](#model-reference)
 - [Caching](#caching)
+- [Contributors](#contributors)
 
 
 Basic Example
@@ -117,30 +118,24 @@ tickets = space.tickets(
 Model Reference
 --------------------------------------------------
 
-All models (Space, Milestone, User and Ticket) are returned with fields corresponding
-to the data from Assembla. Naming conventions generally follow Assembla's
-[API Reference](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API>).
+All Assembla resources are returned with fields corresponding to the data from
+Assembla. Naming conventions generally follow Assembla's
+[API Reference](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API).
+
 Where possible, values are coerced to native Python types.
 
 
 Caching
 --------------------------------------------------
 
-Spaces have an in-memory caching system, which reduces the overheard on repeated
-requests to Assembla. By default, it is activated. You can deactivate it::
+The API wrapper uses an in-memory caching system to reduce the overheard on
+repeated requests to Assembla.
+
+The cache is activated by default, but you can deactivate it when instantiating
+the wrapper:
 
 ```python
-# Deactivate the cache for a space, all subsequent requests will return fresh data
-space.cache.deactivate()
-
-# Deactivate the cache for all spaces instantiated from `assembla`
 assembla = API(auth=('Username', 'Password',), use_cache=False)
-```
-
-If you want to purge stale data from a space's cache and begin refilling it::
-```python
-# Purge stale data from the space's cache, any subsequent request will update the cache
-space.cache.purge()
 ```
 
 
