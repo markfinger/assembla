@@ -9,8 +9,9 @@ from error import AssemblaError
 
 class APIObject(object):
     """
-    Base object for representations of objects on Assembla.
+    Base object for representations of resources pulled from Assembla.
     """
+
     class Meta:
         """
         Descriptive fields for models
@@ -32,10 +33,13 @@ class APIObject(object):
         base_url = 'https://www.assembla.com/'
 
     def __str__(self):
-        return '{0}: {1}'.format(
+        return str(unicode(self))
+
+    def __unicode__(self):
+        return u'{0}: {1}'.format(
             self.__class__.__name__,
             getattr(self, self.Meta.secondary_key, None) or self._pk()
-            )
+        )
 
     def _pk(self):
         """
@@ -103,9 +107,11 @@ class APIObject(object):
         """
         Returns the XML representation of :_url as an lxml etree.
         """
-        headers = {'Accept': 'application/xml'}
-        session = requests.session(auth=auth, headers=headers)
-        response = session.get(url)
+        response = requests.session(
+            auth=auth,
+            headers={'Accept': 'application/xml'}
+        ).get(url)
+
         if response.status_code == 401: # Failed to authenticate
             raise AssemblaError(110)
         elif response.status_code != 200: # Unexpected response
@@ -122,7 +128,7 @@ class APIObject(object):
         return (
             self.__clean_attr_name(element.tag),
             dict(map(self._recursive_dict, element)) or self.__clean_data(element),
-            )
+        )
 
     def __clean_data(self, element):
         """
@@ -142,12 +148,12 @@ class APIObject(object):
                     year=int(value[0]),
                     month=int(value[1]),
                     day=int(value[2])
-                    )
+                )
             elif type == 'boolean':
                 return {
                     'true': True,
                     'false': False,
-                    }[value]
+                }[value]
             elif type == 'integer':
                 return int(value)
             elif type == 'float':
@@ -166,10 +172,7 @@ class APIObject(object):
         Returns :_url as a dict
         """
         tree = self._get_xml_tree(url, auth)
-        return [
-            self._recursive_dict(element)
-                for element in tree.getroot().getchildren()
-            ]
+        return map(self._recursive_dict, tree.getroot().getchildren())
 
     def _get(self, data, **kwargs):
         """
@@ -181,7 +184,9 @@ class APIObject(object):
         """
         if not kwargs:
             raise AssemblaError(220)
+
         results = self._filter(data, **kwargs)
+
         if len(results) == 1:
             return results[0]
         elif len(results) > 1:
@@ -201,7 +206,7 @@ class APIObject(object):
                 [my_object, my_other_object],
                 some_attribute=1
                 some_other_attribute=True
-                )
+            )
             ```
             which returns all objects in the first argument (an iterable) which
             have attributes 'some_attribute' and 'some_other_attribute' equal
@@ -218,7 +223,7 @@ class APIObject(object):
                     lambda element: element == True,
                     [getattr(object, attr_name) == value
                         for attr_name, value in kwargs.iteritems()]
-                    )
-                ),
+                )
+            ),
             data
-            )
+        )
