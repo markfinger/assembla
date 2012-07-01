@@ -115,12 +115,16 @@ tickets = space.tickets(
 ```
 
 
-Model Reference
+Assembla resource reference
 --------------------------------------------------
 
-All Assembla resources are returned with fields corresponding to the data from
-Assembla. Naming conventions generally follow Assembla's
-[API Reference](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API).
+All resources are returned with fields corresponding to the data from
+Assembla.
+
+While naming conventions generally follow Assembla's
+[API Reference](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API),
+one difference is that dashes are replaced with underscores, so
+`status-name` would become `status_name`.
 
 Where possible, values are coerced to native Python types.
 
@@ -135,7 +139,7 @@ The cache is activated by default, but you can deactivate it when instantiating
 the wrapper:
 
 ```python
-assembla = API(auth=('Username', 'Password',), use_cache=False)
+assembla = API(auth=('Username', 'Password',), cache_responses=False)
 ```
 
 
