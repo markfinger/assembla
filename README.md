@@ -55,7 +55,7 @@ print tickets
 Due to Assembla's API design, the above loop causes a request to be
 sent to Assembla for every `space.tickets` call. While the wrapper uses a few
 optimisations, such as the [caching system](#caching), to get around this, it is
-an important point to be aware of.
+an important flaw to be aware of.
 
 
 Examples for Spaces
@@ -171,6 +171,8 @@ The cache is activated by default, but you can deactivate it when instantiating
 the wrapper by passing `cache_responses=False`:
 
 ```python
+from assembla import API
+
 assembla = API(
 	...,
 	cache_responses=False
