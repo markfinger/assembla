@@ -11,6 +11,7 @@ Basic Example
 
 	from assembla import API
 
+	# Authenticate using your normal Assembla Username and Password
 	auth = (
 	    '' # username,
 	    '' # password,
