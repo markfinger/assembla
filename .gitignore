@@ -2,3 +2,6 @@ auth.py
 *.pyc
 .idea
 venv
+.coverage
+build
+dist
