@@ -11,20 +11,27 @@ class TestAssembla:
     """
     assembla = API(auth)
     spaces = assembla.spaces()
-    space = spaces[0]
-    # Find a milestone with tickets.
-    milestone = space.milestone(
-        id=Counter(
-            [ticket.milestone_id for ticket in space.tickets()]
-            ).keys()[0]
-        )
-    # Find a user with assigned tickets.
-    user = space.user(
-        id=Counter([
-            ticket.assigned_to_id for ticket in space.tickets()
-                if ticket.assigned_to_id is not None
-            ]).keys()[0]
-        )
+
+    # Find a space with tickets belonging to a milestone and user
+    for space in spaces:
+        try:
+            # Find a milestone with tickets.
+            milestone = space.milestone(
+                id=Counter(
+                    [ticket.milestone_id for ticket in space.tickets()]
+                ).keys()[0]
+            )
+            # Find a user with assigned tickets.
+            user = space.user(
+                id=Counter([
+                    ticket.assigned_to_id for ticket in space.tickets()
+                        if ticket.assigned_to_id is not None
+                ]).keys()[0]
+            )
+            break
+        except IndexError:
+            pass
+    space = milestone.space
 
     ###################################
     #             API                 #
