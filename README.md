@@ -5,6 +5,7 @@ Python wrapper for the Assembla API
 An easy to use wrapper around the Assembla API.
 
 - [Basic Example](#basic-example)
+- [Assembla's space-driven design and API caveats](#assemblas-space-driven-design-and-api-caveats)
 - [Examples for Spaces](#examples-for-spaces)
 - [Examples for Milestones](#examples-for-milestones)
 - [Examples for Users](#examples-for-users)
