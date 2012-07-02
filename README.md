@@ -10,7 +10,7 @@ An easy to use wrapper around the Assembla API.
 - [Examples for Milestones](#examples-for-milestones)
 - [Examples for Users](#examples-for-users)
 - [Examples for Tickets](#examples-for-tickets)
-- [Model Reference](#model-reference)
+- [Assembla resource reference](#assembla-resource-reference)
 - [Caching](#caching)
 - [Contributors](#contributors)
 
