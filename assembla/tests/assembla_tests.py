@@ -67,7 +67,6 @@ class TestAssembla:
         # the exception is working.
         try:
             api = API(auth=('_','_',))
-            api.spaces = lambda: []
             api.check_credentials()
             raise Exception('Should have thrown an AssemblaError.')
         except AssemblaError as e:

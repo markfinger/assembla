@@ -19,12 +19,10 @@ class API(AssemblaObject, CachesRequests):
     def check_credentials(self):
         """
         Attempt to check the authenticity of the auth credentials by retrieving
-        a list of the user's spaces. Returns True on success.
+        a list of the user's spaces. Returns `True` on success.
         """
-        if not self.spaces():
-            raise AssemblaError(110)
-        else:
-            return True
+        self.spaces()
+        return True
 
     def _harvest_child_objects(self, child_class):
         """
