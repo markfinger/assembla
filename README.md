@@ -9,7 +9,8 @@ An easy to use wrapper around the Assembla API.
 - [Examples for Milestones](#examples-for-milestones)
 - [Examples for Users](#examples-for-users)
 - [Examples for Tickets](#examples-for-tickets)
-- [Model Reference](#model-reference)
+- [Assembla's space-driven design and API caveats](#assemblas-space-driven-design-and-api-caveats)
+- [Assembla resource reference](#assembla-resource-reference)
 - [Caching](#caching)
 - [Contributors](#contributors)
 
@@ -30,38 +31,6 @@ assembla = API(auth)
 
 print assembla.space(name='Big Project').ticket(number=201).status_name
 ```
-
-
-Assembla's space-driven design and API caveats
---------------------------------------------------
-
-The design of the API wrapper follows the conventions of Assembla's interface
-and API, which is structured around Spaces for each project. The outcome of this
-design is that extracting data is generally done by selecting a [Space](#examples-for-spaces)
-and then narrowing down through it's data.
-
-The positive is that it means that once you have selected a Space, you can
-easily retrieve data that will always be contextually relevant.
-
-The *big* downside is that it causes some data to be non-trivial to retrieve.
-For example: every ticket assigned to one user across Assembla:
-
-```python
-user = assembla.space(name='My Project').user(name='John Smith')
-tickets = []
-
-for space in assembla.spaces():
-	assigned_tickets = space.tickets(assigned_to_id=user.id)
-	if assigned_tickets:
-		tickets.append(assigned_tickets)
-
-print tickets
-```
-
-Due to Assembla's API design, the above loop causes a request to be
-sent to Assembla for every `space.tickets` call. While the wrapper uses a few
-optimisations, such as the [caching system](#caching), to get around this, it is
-an important flaw to be aware of.
 
 
 Examples for Spaces
@@ -151,6 +120,38 @@ tickets = space.tickets(
 	status_name='Test'
 )
 ```
+
+
+Assembla's space-driven design and API caveats
+--------------------------------------------------
+
+The design of the API wrapper follows the conventions of Assembla's interface
+and API, which is structured around Spaces for each project. The outcome of this
+design is that extracting data is generally done by selecting a [Space](#examples-for-spaces)
+and then narrowing down through it's data.
+
+The positive is that it means that once you have selected a Space, you can
+easily retrieve data that will always be contextually relevant.
+
+The *big* downside is that it causes some data to be non-trivial to retrieve.
+For example: every ticket assigned to one user across Assembla:
+
+```python
+user = assembla.space(name='My Project').user(name='John Smith')
+tickets = []
+
+for space in assembla.spaces():
+	assigned_tickets = space.tickets(assigned_to_id=user.id)
+	if assigned_tickets:
+		tickets.append(assigned_tickets)
+
+print tickets
+```
+
+Due to Assembla's API design, the above loop causes a request to be
+sent to Assembla for every `space.tickets` call. While the wrapper uses a few
+optimisations, such as the [caching system](#caching), to get around this, it is
+an important flaw to be aware of.
 
 
 Assembla resource reference
