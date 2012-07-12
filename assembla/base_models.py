@@ -29,7 +29,7 @@ class APIObject(object):
         # a list of objects on Assembla's API.
         relative_list_url = None
         # A URL which is prepended to all relative URLs to generate absolute
-        # URLs to HTML pages
+        # paths to resources on the API
         base_url = 'https://www.assembla.com/'
 
     def __str__(self):
@@ -59,22 +59,22 @@ class APIObject(object):
 
     def _url(self, base_url=None, relative_url=None):
         """
-        Generates an absolute _url to a model's instance in the API.
+        Generates an absolute url to a model's instance in the API.
         """
         return ''.join([
             base_url or self.Meta.base_url,
             relative_url or self.Meta.relative_url,
-            ]).format(**{
-                'space': self._get_pk_of_attr('space'),
-                'milestone': self._get_pk_of_attr('milestone'),
-                'user': self._get_pk_of_attr('user'),
-                'ticket': self._get_pk_of_attr('ticket'),
-                'pk': self._safe_pk(),
-                })
+        ]).format(**{
+            'space': self._get_pk_of_attr('space'),
+            'milestone': self._get_pk_of_attr('milestone'),
+            'user': self._get_pk_of_attr('user'),
+            'ticket': self._get_pk_of_attr('ticket'),
+            'pk': self._safe_pk(),
+        })
 
     def _list_url(self):
         """
-        Generates an absolute _url to a list of the model's type on the API.
+        Generates an absolute url to a list of the model's type on the API.
         """
         return self._url(relative_url=self.Meta.relative_list_url)
 
@@ -101,7 +101,7 @@ class APIObject(object):
             # In case we are getting back None, wrap it up in a lambda so we
             # can safely call the result
             lambda: default
-            )() # Need to execute either ._pk or the lambda
+        )() # Need to execute either ._pk or the lambda
 
     def _get_xml_tree(self, url, auth):
         """
@@ -135,28 +135,29 @@ class APIObject(object):
         Try to convert :element.text into a native Python type
         """
         value = element.text
-        if value is None or (element.attrib.has_key('nil') and element.attrib['nil'] == 'true'):
+        if value is None or \
+          (element.attrib.has_key('nil') and element.attrib['nil'] == 'true'):
             return None
         elif element.attrib.has_key('type'):
-            type = element.attrib['type']
-            if type == 'datetime':
+            type_attr = element.attrib['type']
+            if type_attr == 'datetime':
                 value = value[:-6] # Ignoring timezone
                 return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
-            elif type == 'date':
+            elif type_attr == 'date':
                 value = value.split('-')
                 return date(
                     year=int(value[0]),
                     month=int(value[1]),
                     day=int(value[2])
                 )
-            elif type == 'boolean':
+            elif type_attr == 'boolean':
                 return {
                     'true': True,
                     'false': False,
                 }[value]
-            elif type == 'integer':
+            elif type_attr == 'integer':
                 return int(value)
-            elif type == 'float':
+            elif type_attr == 'float':
                 return float(value)
         else:
             return value
@@ -169,7 +170,8 @@ class APIObject(object):
 
     def _harvest(self, url, auth):
         """
-        Returns :_url as a dict
+        Retrieves an XML response from :url and returns it as a list
+        of dictionaries
         """
         tree = self._get_xml_tree(url, auth)
         return map(self._recursive_dict, tree.getroot().getchildren())
