@@ -194,7 +194,7 @@ class TestAssembla:
         assert ticket.summary is not None
         assert ticket.reporter_id is not None
         assert ticket.priority is not None
-        assert ticket.status is not None
+        assert ticket.status_name is not None
         # Check that fields have been converted to Python types
         assert type(ticket.number) is int
         assert type(ticket.priority) is int
@@ -278,7 +278,7 @@ class TestAssembla:
             assert ticket.summary is not None
             assert ticket.reporter_id is not None
             assert ticket.priority is not None
-            assert ticket.status is not None
+            assert ticket.status_name is not None
             # Check that fields have been converted to Python types
             assert type(ticket.number) is int
             assert type(ticket.priority) is int
