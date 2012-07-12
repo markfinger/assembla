@@ -47,7 +47,7 @@ class Cache(MutableMapping):
         return len(self.store)
 
     def has_cached(self, item):
-        return True if self.store.has_key(item) and self.store[item] is not None else False
+        return self.store.has_key(item) and self.store[item]
 
     def activate(self):
         self.cache_responses = True
@@ -61,4 +61,5 @@ class Cache(MutableMapping):
         the schema
         """
         self.store.clear()
-        map(lambda name: self.__setitem__(name, []), self.schema)
+        for name in self.schema:
+            self.__setitem__(name, [])
