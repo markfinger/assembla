@@ -2,7 +2,7 @@
 Python wrapper for the Assembla API
 ===============================================================
 
-An easy to use wrapper around the Assembla API.
+An easy to use wrapper around the [Assembla API](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API).
 
 - [Basic Example](#basic-example)
 - [Examples for Spaces](#examples-for-spaces)
