@@ -159,6 +159,8 @@ class APIObject(object):
                 return int(value)
             elif type_attr == 'float':
                 return float(value)
+            elif type_attr == 'list' and 'custom' in element.tag:
+                return element.attrib['name'], value
         else:
             return value
 
