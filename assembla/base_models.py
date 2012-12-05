@@ -139,7 +139,7 @@ class APIObject(object):
           (element.attrib.has_key('nil') and element.attrib['nil'] == 'true'):
             return None
         elif element.attrib.has_key('type'):
-            type_attr = element.attrib['type']
+            type_attr = element.attrib['type'].lower()
             if type_attr == 'datetime':
                 value = value[:-6] # Ignoring timezone
                 return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
@@ -159,6 +159,8 @@ class APIObject(object):
                 return int(value)
             elif type_attr == 'float':
                 return float(value)
+            elif type_attr == 'list' and 'custom' in element.tag:
+                return element.attrib['name'], value
         else:
             return value
 
