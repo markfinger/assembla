@@ -1,6 +1,4 @@
 # Core libs
-lxml==3.0.2
-xml4h==0.1.0
 requests==1.0.4
 
 # Testing/Dev
