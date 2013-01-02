@@ -6,6 +6,14 @@ from unittest import TestCase
 def test_instantiating_assembla_api():
     API(key='key', secret='secret')
 
+def test_failed_instantiating_assembla_api():
+    try:
+        API()
+    except:
+        return
+    # Shouldn't hit this
+    raise Exception
+
 def test_assembla_auth_details_used_for_testing():
     # If this fails, it means the auth template needs to be filled out.
     # Copy `auth.tmpl.py` to `auth.py` and fill it out with your key and secret
@@ -163,3 +171,30 @@ class TestAssembla(TestCase):
                     # Exit once we've hit a user with tickets
                     return
         self.assertTrue(False, 'this may fail if your Assembla account has insufficient data')
+
+    def test_api_space_filtering(self):
+        test_space = self.assembla.spaces()[-1]
+        filtered_spaces = self.assembla.spaces(id=test_space.get('id'))
+        self.assertEqual(len(filtered_spaces), 1)
+        for space in filtered_spaces:
+            self.assertEqual(
+                space.get('id'),
+                test_space.get('id')
+            )
+
+    def test_space_ticket_filtering(self):
+        space_with_tickets = None
+        for space in self.assembla.spaces():
+            if len(space.tickets()) > 1:
+                space_with_tickets = space
+                break
+        last_ticket = space_with_tickets.tickets()[-1]
+        self.assertEqual(
+            len(space_with_tickets.tickets(number=last_ticket.get('number'))),
+            1
+        )
+        # This works 100% of the time, most of the time
+        self.assertGreater(
+            len(space_with_tickets.tickets(priority=last_ticket.get('priority'))),
+            1
+        )

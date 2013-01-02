@@ -1,6 +1,6 @@
 import urllib
 import requests
-from .lib import AssemblaObject
+from .lib import AssemblaObject, assembla_filter
 
 
 class API(object):
@@ -25,12 +25,14 @@ class API(object):
         self.cache_responses = cache_responses
         self.cache = {}
 
+    @assembla_filter
     def stream(self):
         """
         All Events available
         """
         return self._get_json(Event)
 
+    @assembla_filter
     def spaces(self):
         """
         All Spaces available
@@ -107,6 +109,7 @@ class Event(AssemblaObject):
 class Space(AssemblaObject):
     rel_path = 'spaces'
 
+    @assembla_filter
     def tickets(self):
         """
         All Tickets in this Space
@@ -120,6 +123,7 @@ class Space(AssemblaObject):
             }
         )
 
+    @assembla_filter
     def milestones(self):
         """
         All Milestones in this Space
@@ -129,6 +133,7 @@ class Space(AssemblaObject):
             rel_path=self._get_rel_path('milestones/all'),
         )
 
+    @assembla_filter
     def users(self):
         """
         All Users with access to this Space
@@ -147,6 +152,7 @@ class Space(AssemblaObject):
 
 
 class Milestone(AssemblaObject):
+    @assembla_filter
     def tickets(self):
         """
         All Tickets which are a part of this Milestone
@@ -182,6 +188,7 @@ class Ticket(AssemblaObject):
 
 
 class User(AssemblaObject):
+    @assembla_filter
     def tickets(self):
         """
         A User's tickets across all available spaces
