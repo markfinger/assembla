@@ -174,7 +174,10 @@ class TestAssembla(TestCase):
 
     def test_api_space_filtering(self):
         test_space = self.assembla.spaces()[-1]
-        filtered_spaces = self.assembla.spaces(id=test_space.get('id'))
+        filtered_spaces = self.assembla.spaces(
+            id=test_space.get('id'),
+            name=test_space.get('name'),
+        )
         self.assertEqual(len(filtered_spaces), 1)
         for space in filtered_spaces:
             self.assertEqual(
