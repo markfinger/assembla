@@ -44,7 +44,7 @@ class API(object):
         # Pagination for requests carrying large amounts of data
         if not extra_params:
             extra_params = {}
-        extra_params['page'] = extra_params.get('page', 0)
+        extra_params['page'] = extra_params.get('page', 1)
 
         # Generate the url to hit
         url = 'https://api.assembla.com/{0}/{1}.json?{2}'.format(
@@ -53,10 +53,11 @@ class API(object):
             urllib.urlencode(extra_params),
         )
 
-        # Cache responses
+        # If the cache is being used and the url has been hit already
         if self.cache_responses and url in self.cache:
             response = self.cache[url]
         else:
+            # Fetch the data
             response = requests.get(
                 url=url,
                 headers={
@@ -64,6 +65,7 @@ class API(object):
                     'X-Api-Secret': self.secret,
                 },
             )
+            # If the cache is being used, update it
             if self.cache_responses:
                 self.cache[url] = response
 
@@ -73,9 +75,14 @@ class API(object):
                     model(data=json, api=self)
                 ) for json in response.json()
             ]
-            # If the results have hit the maximum limit per page
-            # fetch the next page
-            if extra_params.get('per_page', None) == len(results):
+            # If the number of results is divisible by the maximum limit per
+            # page, then we need to fetch the next page
+            per_page = extra_params.get('per_page', None)
+            if (
+                per_page
+                and len(results)
+                and per_page % len(results) == 0
+            ):
                 extra_params['page'] = extra_params['page'] + 1
                 results = results + self._get_json(model, rel_path, extra_params)
             return results
