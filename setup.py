@@ -11,28 +11,31 @@ Basic Example
 
 	from assembla import API
 
-	# Authenticate using your normal Assembla Username and Password
-	auth = (
-	    '' # username,
-	    '' # password,
+	assembla = API(
+    	key='8a71541e5fb2e4741120',
+    	secret='a260dc4448c81c907fc7c85ad09d31306c425417',
+    	# Use your API key/secret from https://www.assembla.com/user/edit/manage_clients
 	)
 
-	assembla = API(auth)
+	my_space = assembla.spaces(name='My Space')[0]
 
-	print assembla.space(name='Big Project').ticket(number=201).status_name
+	for ticket in my_space.tickets():
+    	print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
 
+	# >>> #1 - My first ticket
+	# >>> #2 - My second ticket
+	# ...
 
 Full documentation at http://github.com/markfinger/assembla
 """
 
 setup(
     name = 'assembla',
-    version = '1.2.4',
+    version = '2.0.0',
     packages = find_packages(),
 
     install_requires = [
-        'requests>=0.7.4',
-        'lxml>=2.3.1',
+        'requests==1.0.4',
     ],
     package_data = {'assembla': []},
     entry_points = {},
@@ -40,8 +43,8 @@ setup(
     # metadata for upload to PyPI
     author = 'Mark Finger',
     author_email = 'markfinger@gmail.com',
-    description = 'An easy to use wrapper around the Assembla API',
-    license = 'BSD',
+    description = 'Python wrapper for the Assembla API',
+    license = 'CC BY 3.0',
     platforms=['any'],
     keywords = 'Assembla API',
     url = 'http://github.com/markfinger/assembla/',
@@ -52,6 +55,5 @@ setup(
         'Topic :: Software Development',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'License :: OSI Approved :: BSD License',
     ],
 )
