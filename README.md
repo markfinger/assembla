@@ -222,7 +222,7 @@ See the [Event object field reference](http://api-doc.assembla.com/content/ref/e
 for field names and explanations.
 
 
-Filtering objects
+Filtering objects with keyword arguments
 --------------------------------------------------
 
 Most data retrieval methods allow for filtering of the objects based on
@@ -248,8 +248,12 @@ The following methods allow for keyword filtering:
 
 Custom fields
 --------------------------------------------------
-Custom fields
-	-> Ticket example
+
+Custom fields for objects are accessible like most data, for example to
+get a custom field 'billing_code' from a ticket:
+```python
+billing_code = ticket['custom_fields']['billing_code']
+```
 
 
 Caching
