@@ -12,15 +12,15 @@ Basic Example
 	from assembla import API
 
 	assembla = API(
-    	key='8a71541e5fb2e4741120',
-    	secret='a260dc4448c81c907fc7c85ad09d31306c425417',
-    	# Use your API key/secret from https://www.assembla.com/user/edit/manage_clients
+	    key='8a71541e5fb2e4741120',
+	    secret='a260dc4448c81c907fc7c85ad09d31306c425417',
+	    # Auth details from https://www.assembla.com/user/edit/manage_clients
 	)
 
 	my_space = assembla.spaces(name='My Space')[0]
 
 	for ticket in my_space.tickets():
-    	print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+	    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
 
 	# >>> #1 - My first ticket
 	# >>> #2 - My second ticket

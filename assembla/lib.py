@@ -2,7 +2,7 @@ from functools import wraps
 
 class AssemblaObject(object):
     """
-    Proxies getitem calls (eg: `instance['id']`) to a dictionary `instance._data['id']`.
+    Proxies getitem calls (eg: `instance['id']`) to a dictionary `instance.data['id']`.
     """
 
     def __init__(self, data, api):
