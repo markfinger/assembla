@@ -55,12 +55,12 @@ User guide
 --------------------------------------------------
 
 The Assembla API wrapper uses a number of Python classes to represent
-the objects retrieved from Assembla, some of which possess specific
-methods:
+the objects retrieved from Assembla, some of which possess the following
+methods and properties:
 
 - [API](#api)
-    - [API.stream](#apistream)
-    - [API.spaces](#apispaces)
+    - [stream](#apistream)
+    - [spaces](#apispaces)
 - [Space](#space)
     - [tickets](#spacetickets)
     - [milestones](#spacemilestones)
