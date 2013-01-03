@@ -7,6 +7,7 @@ An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 - [Installation](#installation)
 - [Basic example](#basic-example)
 - [User guide](#user-guide)
+- [Filtering objects](#filtering-objects)
 - [Custom fields](#custom-fields)
 - [Caching](#caching)
 
@@ -85,11 +86,13 @@ of navigating Assembla's data:
 
 ###API.stream
 Returns a list of [Event](#event) instances indicating the
-activity stream you have access to.
+activity stream you have access to. Events can be filtered using
+keyword arguments
 ###API.spaces
 Returns a list of [Space](#space) instances which represent
 all the spaces that you have access to.
 
+Example:
 ```python
 from assembla import API
 
@@ -99,9 +102,148 @@ assembla = API(
     # Use your API key/secret from https://www.assembla.com/user/edit/manage_clients
 )
 
-my_spaces = assembla.spaces()
-my_stream = assembla.stream()
+for space in assembla.spaces():
+	print space['name']
 ```
+
+
+Space
+--------------------------------------------------
+
+See the [Space object field reference](http://api-doc.assembla.com/content/ref/space_fields.html)
+for field names and explanations.
+
+Spaces possess the following methods:
+
+###Space.tickets
+Returns a list of all [Ticket](#ticket) instances inside the Space.
+Tickets can be filtered using keyword arguments.
+###Space.milestones
+Returns a list of all [Milestone](#milestone) instances inside the Space.
+Milestones can be filtered using keyword arguments.
+###Space.users
+Returns a list of all [User](#user) instances with access to the Space.
+Users can be filtered using keyword arguments.
+
+Here is an example which prints a report of all the tickets in a
+Space which have the status 'New' and belong to a milestone called 'Alpha Release':
+```python
+space = assembla.spaces(name='My Space')[0]
+
+milestone = my_space.milestones(title='Alpha Release')[0]
+
+tickets = space.tickets(
+	milestone_id=milestone['id'],
+	status='New'
+)
+
+print 'New tickets in "{0}".format(milestone['title'])
+for ticket in tickets:
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> New tickets in "Alpha Release"
+# >>> #1 - My first ticket
+# >>> #2 - My second ticket
+# ...
+```
+
+
+Milestone
+--------------------------------------------------
+
+See the [Milestone object field reference](http://api-doc.assembla.com/content/ref/milestones_fields.html)
+for field names and explanations.
+
+Milestone instances possess the following method:
+
+###Milestone.tickets
+Returns a list of all [Ticket](#ticket) instances which are connected
+to the Milestone. Tickets can be filtered using keyword arguments.
+
+Here is an example which prints a report of all the tickets in a
+milestone:
+```python
+milestone = space.milestones()[0]
+
+for ticket in milestone.tickets():
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> #1 - My first ticket
+# >>> #2 - My second ticket
+# ...
+```
+
+
+Ticket
+--------------------------------------------------
+
+See the [Ticket object field reference](http://api-doc.assembla.com/content/ref/ticket_fields.html)
+for field names and explanations.
+
+Ticket instances possess the following properties:
+
+###Tickets.milestone
+An instance of the [Milestone](#milestone) that the Ticket belongs to.
+
+###Tickets.user
+An instance of the [User](#user) that the Ticket is assigned to.
+
+
+User
+--------------------------------------------------
+
+See the [User object field reference](http://api-doc.assembla.com/content/ref/user_fields.html)
+for field names and explanations.
+
+User instances possess the following method:
+
+###User.tickets
+Returns a list of all [Ticket](#ticket) instances which are assigned
+to the User. Tickets can be filtered using keyword arguments.
+
+Here is an example which prints a report of all the tickets assigned
+to a user named 'John Smith':
+```python
+user = space.users(name='John Smith')[0]
+
+for ticket in user.tickets():
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> #1 - John's first ticket
+# >>> #2 - John's second ticket
+# ...
+```
+
+
+Event
+--------------------------------------------------
+
+See the [Event object field reference](http://api-doc.assembla.com/content/ref/event_fields.html)
+for field names and explanations.
+
+
+Filtering objects
+--------------------------------------------------
+
+Most data retrieval methods allow for filtering of the objects based on
+the data returned by Assembla. The keyword arguments to use correlate to
+the field names returned by Assembla, for example [Tickets](#ticket) can
+be filtered with keyword arguments similar to field names specified in
+[Assembla's Ticket Fields documentation](http://api-doc.assembla.com/content/ref/ticket_fields.html)
+
+Using [Space.tickets](#spacetickets) as an example of filtering with keyword
+arguments:
+- `space.tickets(number=100)` will return the ticket with the number 100.
+- `space.tickets(status='New', assigned_to_id=100)` will return new tickets assigned to a user with the id 100
+
+The following methods allow for keyword filtering:
+- [API.stream](#apistream)
+- [API.spaces](#apispaces)
+- [Space.tickets](#spacetickets)
+- [Space.milestones](#spacemilestones)
+- [Space.users](#spaceusers)
+- [Milestone.tickets](#milestonetickets)
+- [User.tickets](#usertickets)
 
 
 Custom fields
