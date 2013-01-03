@@ -27,8 +27,8 @@ class TestAssembla(TestCase):
     assembla = API(
         key=auth[0],
         secret=auth[1],
-        cache_responses=True,
     )
+    assembla.cache_responses = True
 
     def __check_ticket_is_valid(self, ticket):
         for key in (

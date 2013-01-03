@@ -4,8 +4,10 @@ from .lib import AssemblaObject, assembla_filter
 
 
 class API(object):
+    cache_responses = False
+    cache = {}
 
-    def __init__(self, key=None, secret=None, cache_responses=None):
+    def __init__(self, key=None, secret=None):
         """
         :key,
         :secret
@@ -22,8 +24,6 @@ class API(object):
             )
         self.key = key
         self.secret = secret
-        self.cache_responses = cache_responses
-        self.cache = {}
 
     @assembla_filter
     def stream(self):
@@ -123,7 +123,7 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             Ticket,
-            rel_path=self._get_rel_path('tickets'),
+            rel_path=self._build_rel_path('tickets'),
             extra_params={
                 'per_page': 1000,
                 'report': 0 # All tickets
@@ -137,7 +137,7 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             Milestone,
-            rel_path=self._get_rel_path('milestones/all'),
+            rel_path=self._build_rel_path('milestones/all'),
         )
 
     @assembla_filter
@@ -147,10 +147,10 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             User,
-            rel_path=self._get_rel_path('users'),
+            rel_path=self._build_rel_path('users'),
         )
 
-    def _get_rel_path(self, to_append=None):
+    def _build_rel_path(self, to_append=None):
         return '{0}/{1}/{2}'.format(
             self.rel_path,
             self['id'],
