@@ -249,8 +249,10 @@ The following methods allow for keyword filtering:
 Custom fields
 --------------------------------------------------
 
-Custom fields for objects are accessible like most data, for example to
-get a custom field 'billing_code' from a ticket:
+An object's custom fields are retrieved similarly to most fields, the only difference
+is that they are nested within a dictionary named `custom_fields`.
+
+Here's an example to get a custom field 'billing_code' from a ticket:
 ```python
 billing_code = ticket['custom_fields']['billing_code']
 ```
