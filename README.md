@@ -97,7 +97,9 @@ Here's an example which prints a list of the spaces available:
 from assembla import API
 
 assembla = API(
-    # Auth details
+    key='8a71541e5fb2e4741120',
+    secret='a260dc4448c81c907fc7c85ad09d31306c425417',
+    # Use your API key/secret from https://www.assembla.com/user/edit/manage_clients
 )
 
 for space in assembla.spaces():
