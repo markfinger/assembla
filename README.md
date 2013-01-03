@@ -7,12 +7,6 @@ An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 - [Installation](#installation)
 - [Basic example](#basic-example)
 - [User guide](#user-guide)
-	- [API](#api)
-    - [Space](#space)
-    - [Milestone](#milestone)
-    - [Ticket](#ticket)
-    - [User](#user)
-    - [Event](#event)
 - [Custom fields](#custom-fields)
 - [Caching](#caching)
 
@@ -64,8 +58,8 @@ the objects retrieved from Assembla, some of which possess specific
 methods:
 
 - [API](#api)
-    - [stream](#)
-    - [spaces](#)
+    - [API.stream](#apistream)
+    - [API.spaces](#apispaces)
 - [Space](#space)
     - [tickets](#)
     - [milestones](#)
@@ -89,12 +83,12 @@ with authentication details (available from
 https://www.assembla.com/user/edit/manage_clients) and offer two methods
 of navigating Assembla's data:
 
-	- ###Stream
-	    Returns a list of [Event](#event) instances indicating the
-	    activity stream you have access to.
-	- ###Spaces
-		Returns a list of [Space](#space) instances which represent
-		all the spaces that you have access to.
+###API.stream
+Returns a list of [Event](#event) instances indicating the
+activity stream you have access to.
+###API.spaces
+Returns a list of [Space](#space) instances which represent
+all the spaces that you have access to.
 
 ```python
 from assembla import API
