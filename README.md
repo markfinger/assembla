@@ -2,194 +2,277 @@
 Python wrapper for the Assembla API
 ===============================================================
 
-An easy to use wrapper around the [Assembla API](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API).
+An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 
-- [Basic Example](#basic-example)
-- [Examples for Spaces](#examples-for-spaces)
-- [Examples for Milestones](#examples-for-milestones)
-- [Examples for Users](#examples-for-users)
-- [Examples for Tickets](#examples-for-tickets)
-- [Assembla's space-driven design and API caveats](#assemblas-space-driven-design-and-api-caveats)
-- [Assembla resource reference](#assembla-resource-reference)
+- [Installation](#installation)
+- [Basic example](#basic-example)
+- [User guide](#user-guide)
+- [Filtering objects with keyword arguments](#filtering-objects-with-keyword-arguments)
+- [Custom fields](#custom-fields)
 - [Caching](#caching)
-- [Contributors](#contributors)
 
 
-Basic Example
+Installation
 --------------------------------------------------
 
-```python
-from assembla import API
+Install assembla with pip:
 
-# Authenticate using your normal Assembla Username and Password
-auth = (
-	'' # Username,
-	'' # Password,
-)
-
-assembla = API(auth)
-
-print assembla.space(name='Big Project').ticket(number=201).status_name
+```
+$ pip install assembla
 ```
 
+Connecting to Assembla's API requires your user account's authentication key and secret,
+which are accessible from https://www.assembla.com/user/edit/manage_clients.
 
-Examples for Spaces
+
+Basic example
 --------------------------------------------------
 
-```python
-# Retrieve your available spaces
-spaces = assembla.spaces()
-
-# Select a specific space
-space = assembla.space(name='My Project')
-
-# Retrieve the space's milestones
-milestones = space.milestones()
-
-# Retrieve a specific milestone from the space
-milestone = space.milestone('Release Candidate 1')
-
-# Retrieve all of the space's tickets
-tickets = space.tickets()
-
-# Retrieve the space's tickets which are awaiting testing
-tickets = space.tickets(status_name='Test')
-
-# Retrieve a specific ticket from the space
-ticket = space.ticket(number=301)
-
-# Retrieve all of the space's users
-users = space.users()
-
-# Retrieve a specific user from the space
-user = space.user(name='John Smith')
-```
-
-
-Examples for Milestones
---------------------------------------------------
-
-```python
-# Select a specific milestone
-milestone = assembla.space(name='My Project').milestone('Release Candidate 1')
-
-# Retrieve the milestone's tickets
-tickets = milestone.tickets()
-
-# Retrieve a specific ticket from the milestone
-ticket = milestone.ticket(number=301)
-
-# Retrieve the milestone's users
-users = milestone.users()
-
-# Retrieve a specific user from the milestone
-user = milestone.user(name='John Smith')
-```
-
-
-Examples for Users
---------------------------------------------------
-
-```python
-# Select a specific user
-user = assembla.space(name='My Project').user(name='John Smith')
-
-# Retrieve the user's tickets
-tickets = user.tickets()
-
-# Retrieve a specific ticket from the user
-ticket = user.ticket(status_name='Test')
-```
-
-
-Examples for Tickets
---------------------------------------------------
-
-```python
-# Retrieve a specific ticket
-ticket = space.ticket(number=201)
-
-# Retrieve all tickets awaiting code review
-tickets = space.tickets(status_name='Code Review')
-
-# Retrieve all tickets assigned to an individual which are of a certain priority
-# and awaiting testing
-tickets = space.tickets(
-	assigned_to_id=user.id,
-	priority=1,
-	status_name='Test'
-)
-```
-
-
-Assembla's space-driven design and API caveats
---------------------------------------------------
-
-The design of the API wrapper follows the conventions of Assembla's interface
-and API, which is structured around Spaces for each project. The outcome of this
-design is that extracting data is generally done by selecting a [Space](#examples-for-spaces)
-and then narrowing down through it's data.
-
-The positive is that it means that once you have selected a Space, you can
-easily retrieve data that will always be contextually relevant.
-
-The *big* downside is that it causes some data to be non-trivial to retrieve.
-For example: every ticket assigned to one user across Assembla:
-
-```python
-user = assembla.space(name='My Project').user(name='John Smith')
-tickets = []
-
-for space in assembla.spaces():
-	assigned_tickets = space.tickets(assigned_to_id=user.id)
-	if assigned_tickets:
-		tickets.append(assigned_tickets)
-
-print tickets
-```
-
-Due to Assembla's API design, the above loop causes a request to be
-sent to Assembla for every `space.tickets` call. While the wrapper uses a few
-optimisations, such as the [caching system](#caching), to get around this, it is
-an important flaw to be aware of.
-
-
-Assembla resource reference
---------------------------------------------------
-
-All resources are returned with fields corresponding to the data from
-Assembla.
-
-While naming conventions generally follow Assembla's
-[API Reference](http://www.assembla.com/spaces/breakoutdocs/wiki/Assembla_REST_API),
-one difference is that dashes are replaced with underscores, so
-`status-name` would become `status_name`.
-
-Where possible, values are coerced to native Python types, eg: dates are parsed
-as as `datetime.datetime` objects.
-
-
-Caching
---------------------------------------------------
-
-The API wrapper uses an in-memory caching system to reduce the overheard on
-repeated requests to Assembla.
-
-The cache is activated by default, but you can deactivate it when instantiating
-the wrapper by passing `cache_responses=False`:
+The following example connects to Assembla, retrieves a list of tickets for a
+space and then outputs information about each.
 
 ```python
 from assembla import API
 
 assembla = API(
-	...,
-	cache_responses=False
+    key='8a71541e5fb2e4741120',
+    secret='a260dc4448c81c907fc7c85ad09d31306c425417',
+    # Use your API key/secret from https://www.assembla.com/user/edit/manage_clients
 )
+
+my_space = assembla.spaces(name='My Space')[0]
+
+for ticket in my_space.tickets():
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> #1 - My first ticket
+# >>> #2 - My second ticket
+# ...
 ```
 
 
-Contributors
+User guide
 --------------------------------------------------
 
-- [Mark Finger](http://github.com/markfinger)
-- [Venkata Ramana](http://github.com/arjunc77)
+The Assembla API wrapper uses a number of Python classes to represent
+the objects retrieved from Assembla, some of which possess specific
+methods:
+
+- [API](#api)
+    - [API.stream](#apistream)
+    - [API.spaces](#apispaces)
+- [Space](#space)
+    - [tickets](#spacetickets)
+    - [milestones](#spacemilestones)
+    - [users](#spaceusers)
+- [Milestone](#milestone)
+    - [tickets](#milestonetickets)
+- [Ticket](#ticket)
+    - [milestone](#ticketmilestone)
+    - [user](#ticketuser)
+- [User](#user)
+    - [tickets](#usertickets)
+- [Event](#event)
+
+
+API
+--------------------------------------------------
+
+API instances are the primary facet of the Assembla API wrapper and are
+the starting point for interactions with the API. APIs are instantiated
+with authentication details (available from
+https://www.assembla.com/user/edit/manage_clients) and offer two methods
+of navigating Assembla's data:
+
+###API.stream
+Returns a list of [Event](#event) instances indicating the
+activity stream you have access to. Events can be filtered using
+keyword arguments
+###API.spaces
+Returns a list of [Space](#space) instances which represent
+all the spaces that you have access to.
+
+Example:
+```python
+from assembla import API
+
+assembla = API(
+    key='8a71541e5fb2e4741120',
+    secret='a260dc4448c81c907fc7c85ad09d31306c425417',
+    # Use your API key/secret from https://www.assembla.com/user/edit/manage_clients
+)
+
+for space in assembla.spaces():
+	print space['name']
+```
+
+
+Space
+--------------------------------------------------
+
+See the [Space object field reference](http://api-doc.assembla.com/content/ref/space_fields.html#fields)
+for field names and explanations.
+
+Spaces possess the following methods:
+
+###Space.tickets
+Returns a list of all [Ticket](#ticket) instances inside the Space.
+Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+###Space.milestones
+Returns a list of all [Milestone](#milestone) instances inside the Space.
+Milestones can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+###Space.users
+Returns a list of all [User](#user) instances with access to the Space.
+Users can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+
+Here is an example which prints a report of all the tickets in a
+Space which have the status 'New' and belong to a milestone called 'Alpha Release':
+```python
+space = assembla.spaces(name='My Space')[0]
+
+milestone = my_space.milestones(title='Alpha Release')[0]
+
+tickets = space.tickets(
+	milestone_id=milestone['id'],
+	status='New'
+)
+
+print 'New tickets in "{0}".format(milestone['title'])
+for ticket in tickets:
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> New tickets in "Alpha Release"
+# >>> #1 - My first ticket
+# >>> #2 - My second ticket
+# ...
+```
+
+
+Milestone
+--------------------------------------------------
+
+See the [Milestone object field reference](http://api-doc.assembla.com/content/ref/milestones_fields.html#fields)
+for field names and explanations.
+
+Milestone instances possess the following method:
+
+###Milestone.tickets
+Returns a list of all [Ticket](#ticket) instances which are connected
+to the Milestone. Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+
+Here is an example which prints a report of all the tickets in a
+milestone:
+```python
+milestone = space.milestones()[0]
+
+for ticket in milestone.tickets():
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> #1 - My first ticket
+# >>> #2 - My second ticket
+# ...
+```
+
+
+Ticket
+--------------------------------------------------
+
+See the [Ticket object field reference](http://api-doc.assembla.com/content/ref/ticket_fields.html#fields)
+for field names and explanations.
+
+Ticket instances possess the following properties:
+
+###Tickets.milestone
+An instance of the [Milestone](#milestone) that the Ticket belongs to.
+
+###Tickets.user
+An instance of the [User](#user) that the Ticket is assigned to.
+
+
+User
+--------------------------------------------------
+
+See the [User object field reference](http://api-doc.assembla.com/content/ref/user_fields.html#fields)
+for field names and explanations.
+
+User instances possess the following method:
+
+###User.tickets
+Returns a list of all [Ticket](#ticket) instances which are assigned
+to the User. Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+
+Here is an example which prints a report of all the tickets assigned
+to a user named 'John Smith':
+```python
+user = space.users(name='John Smith')[0]
+
+for ticket in user.tickets():
+    print '#{0} - {1}'.format(ticket['number'], ticket['summary'])
+
+# >>> #1 - John's first ticket
+# >>> #2 - John's second ticket
+# ...
+```
+
+
+Event
+--------------------------------------------------
+
+See the [Event object field reference](http://api-doc.assembla.com/content/ref/event_fields.html#fields)
+for field names and explanations.
+
+
+Filtering objects with keyword arguments
+--------------------------------------------------
+
+Most data retrieval methods allow for filtering of the objects based on
+the data returned by Assembla. The keyword arguments to use correlate to
+the field names returned by Assembla, for example [Tickets](#ticket) can
+be filtered with keyword arguments similar to field names specified in
+[Assembla's Ticket Fields documentation](http://api-doc.assembla.com/content/ref/ticket_fields.html)
+
+Using [Space.tickets](#spacetickets) as an example of filtering with keyword
+arguments:
+- `space.tickets(number=100)` will return the ticket with the number 100.
+- `space.tickets(status='New', assigned_to_id=100)` will return new tickets assigned to a user with the id 100
+
+The following methods allow for keyword filtering:
+- [API.stream](#apistream)
+- [API.spaces](#apispaces)
+- [Space.tickets](#spacetickets)
+- [Space.milestones](#spacemilestones)
+- [Space.users](#spaceusers)
+- [Milestone.tickets](#milestonetickets)
+- [User.tickets](#usertickets)
+
+
+Custom fields
+--------------------------------------------------
+
+Custom fields for objects are accessible like most data, for example to
+get a custom field 'billing_code' from a ticket:
+```python
+billing_code = ticket['custom_fields']['billing_code']
+```
+
+
+Caching
+--------------------------------------------------
+
+The API wrapper has an optional response caching system which is deactivated
+by default. Turning the caching system on will reduce the overhead on repeated
+requests, but can cause stale data to perpetuate for long-running processes.
+Turning the cache on is done by setting an [API](#api) instance's `cache_responses`
+variable to `True`. The cache can be turned off by setting `cache_responses`
+to `False`.
+
+Here is an example of how to instantiate the wrapper and activate the cache.
+```python
+from assembla import API
+
+assembla = API(
+	# Auth details...
+)
+
+assembla.cache_responses = True
+```
