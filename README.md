@@ -7,7 +7,7 @@ An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 - [Installation](#installation)
 - [Basic example](#basic-example)
 - [User guide](#user-guide)
-- [Filtering objects](#filtering-objects)
+- [Filtering objects with keyword arguments](#filtering-objects-with-keyword-arguments)
 - [Custom fields](#custom-fields)
 - [Caching](#caching)
 
@@ -62,16 +62,16 @@ methods:
     - [API.stream](#apistream)
     - [API.spaces](#apispaces)
 - [Space](#space)
-    - [tickets](#)
-    - [milestones](#)
-    - [users](#)
+    - [tickets](#spacetickets)
+    - [milestones](#spacemilestones)
+    - [users](#spaceusers)
 - [Milestone](#milestone)
-    - [tickets](#)
+    - [tickets](#milestonetickets)
 - [Ticket](#ticket)
-    - [milestone](#)
-    - [user](#)
+    - [milestone](#ticketmilestone)
+    - [user](#ticketuser)
 - [User](#user)
-    - [tickets](#)
+    - [tickets](#usertickets)
 - [Event](#event)
 
 
@@ -110,20 +110,20 @@ for space in assembla.spaces():
 Space
 --------------------------------------------------
 
-See the [Space object field reference](http://api-doc.assembla.com/content/ref/space_fields.html)
+See the [Space object field reference](http://api-doc.assembla.com/content/ref/space_fields.html#fields)
 for field names and explanations.
 
 Spaces possess the following methods:
 
 ###Space.tickets
 Returns a list of all [Ticket](#ticket) instances inside the Space.
-Tickets can be filtered using keyword arguments.
+Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
 ###Space.milestones
 Returns a list of all [Milestone](#milestone) instances inside the Space.
-Milestones can be filtered using keyword arguments.
+Milestones can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
 ###Space.users
 Returns a list of all [User](#user) instances with access to the Space.
-Users can be filtered using keyword arguments.
+Users can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
 
 Here is an example which prints a report of all the tickets in a
 Space which have the status 'New' and belong to a milestone called 'Alpha Release':
@@ -151,14 +151,14 @@ for ticket in tickets:
 Milestone
 --------------------------------------------------
 
-See the [Milestone object field reference](http://api-doc.assembla.com/content/ref/milestones_fields.html)
+See the [Milestone object field reference](http://api-doc.assembla.com/content/ref/milestones_fields.html#fields)
 for field names and explanations.
 
 Milestone instances possess the following method:
 
 ###Milestone.tickets
 Returns a list of all [Ticket](#ticket) instances which are connected
-to the Milestone. Tickets can be filtered using keyword arguments.
+to the Milestone. Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
 
 Here is an example which prints a report of all the tickets in a
 milestone:
@@ -177,7 +177,7 @@ for ticket in milestone.tickets():
 Ticket
 --------------------------------------------------
 
-See the [Ticket object field reference](http://api-doc.assembla.com/content/ref/ticket_fields.html)
+See the [Ticket object field reference](http://api-doc.assembla.com/content/ref/ticket_fields.html#fields)
 for field names and explanations.
 
 Ticket instances possess the following properties:
@@ -192,14 +192,14 @@ An instance of the [User](#user) that the Ticket is assigned to.
 User
 --------------------------------------------------
 
-See the [User object field reference](http://api-doc.assembla.com/content/ref/user_fields.html)
+See the [User object field reference](http://api-doc.assembla.com/content/ref/user_fields.html#fields)
 for field names and explanations.
 
 User instances possess the following method:
 
 ###User.tickets
 Returns a list of all [Ticket](#ticket) instances which are assigned
-to the User. Tickets can be filtered using keyword arguments.
+to the User. Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
 
 Here is an example which prints a report of all the tickets assigned
 to a user named 'John Smith':
@@ -218,7 +218,7 @@ for ticket in user.tickets():
 Event
 --------------------------------------------------
 
-See the [Event object field reference](http://api-doc.assembla.com/content/ref/event_fields.html)
+See the [Event object field reference](http://api-doc.assembla.com/content/ref/event_fields.html#fields)
 for field names and explanations.
 
 
