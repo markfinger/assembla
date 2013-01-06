@@ -31,7 +31,7 @@ Full documentation at http://github.com/markfinger/assembla
 
 setup(
     name = 'assembla',
-    version = '2.0.0',
+    version = '2.0.1',
     packages = find_packages(),
 
     install_requires = [
@@ -44,7 +44,7 @@ setup(
     author = 'Mark Finger',
     author_email = 'markfinger@gmail.com',
     description = 'Python wrapper for the Assembla API',
-    license = 'CC BY 3.0',
+    license = 'MIT',
     platforms=['any'],
     keywords = 'Assembla API',
     url = 'http://github.com/markfinger/assembla/',
@@ -55,5 +55,6 @@ setup(
         'Topic :: Software Development',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'License :: OSI Approved :: MIT License',
     ],
 )
