@@ -13,9 +13,6 @@ class API(object):
         :secret
             Your Assembla API access details, available from
             https://www.assembla.com/user/edit/manage_clients
-        :cache_responses
-            If a truthy value is provided, a caching system is activated which
-            reduces the overhead on repeated requests
         """
         if not key or not secret:
             raise Exception(
