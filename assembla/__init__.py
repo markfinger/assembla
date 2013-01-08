@@ -174,10 +174,13 @@ class Ticket(AssemblaObject):
         The Milestone that the Ticket is a part of
         """
         if self.get('milestone_id', None):
-            return filter(
-                lambda milestone: milestone['id'] == self['milestone_id'],
-                self.space.milestones()
-            )[0]
+            try:
+                return filter(
+                    lambda milestone: milestone['id'] == self['milestone_id'],
+                    self.space.milestones()
+                )[0]
+            except IndexError:
+                pass
 
     @property
     def user(self):
@@ -185,10 +188,13 @@ class Ticket(AssemblaObject):
         The User currently assigned to the Ticket
         """
         if self.get('assigned_to_id', None):
-            return filter(
-                lambda user: user['id'] == self['assigned_to_id'],
-                self.space.users()
-            )[0]
+            try:
+                return filter(
+                    lambda user: user['id'] == self['assigned_to_id'],
+                    self.space.users()
+                )[0]
+            except IndexError:
+                pass
 
 
 class User(AssemblaObject):
