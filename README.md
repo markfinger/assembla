@@ -130,7 +130,7 @@ Space which have the status 'New' and belong to a milestone called 'Alpha Releas
 ```python
 space = assembla.spaces(name='My Space')[0]
 
-milestone = my_space.milestones(title='Alpha Release')[0]
+milestone = space.milestones(title='Alpha Release')[0]
 
 tickets = space.tickets(
 	milestone_id=milestone['id'],
