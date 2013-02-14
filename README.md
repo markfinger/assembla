@@ -87,11 +87,14 @@ of navigating Assembla's data:
 
 ###API.stream
 Returns a list of [Event](#event) instances indicating the
-activity stream you have access to. Events can be filtered using
-keyword arguments
+activity stream you have access to. Keyword arguments can be provided
+to [filter](#filtering-objects-with-keyword-arguments) the results.
+
+
 ###API.spaces
 Returns a list of [Space](#space) instances which represent
-all the spaces that you have access to.
+all the spaces that you have access to. Keyword arguments can be provided
+to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 Here's an example which prints a list of the spaces available:
 ```python
@@ -118,16 +121,16 @@ Spaces possess the following methods:
 
 ###Space.tickets
 Returns a list of all [Ticket](#ticket) instances inside the Space.
-Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 ###Space.milestones
 Returns a list of all [Milestone](#milestone) instances inside the Space.
-Milestones can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 ###Space.components
 Returns a list of all [Component](#component) instances inside the Space.
-Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 ###Space.users
 Returns a list of all [User](#user) instances with access to the Space.
-Users can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 Here is an example which prints a report of all the tickets in a
 Space which have the status 'New' and belong to a milestone called 'Alpha Release':
@@ -161,8 +164,8 @@ for field names and explanations.
 Milestone instances possess the following method:
 
 ###Milestone.tickets
-Returns a list of all [Ticket](#ticket) instances which are connected
-to the Milestone. Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+Returns a list of all [Ticket](#ticket) instances which are connected to the Milestone.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 Here is an example which prints a report of all the tickets in a
 milestone:
@@ -205,8 +208,8 @@ for field names and explanations.
 User instances possess the following method:
 
 ###User.tickets
-Returns a list of all [Ticket](#ticket) instances which are assigned
-to the User. Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+Returns a list of all [Ticket](#ticket) instances which are assigned to the User.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 Here is an example which prints a report of all the tickets assigned
 to a user named 'John Smith':
