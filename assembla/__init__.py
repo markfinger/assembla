@@ -138,6 +138,16 @@ class Space(AssemblaObject):
         )
 
     @assembla_filter
+    def components(self):
+        """"
+        All components in this Space
+        """
+        return self.api._get_json(
+            Component,
+            rel_path=self._build_rel_path('ticket_components'),
+        )
+
+    @assembla_filter
     def users(self):
         """
         All Users with access to this Space
@@ -154,6 +164,9 @@ class Space(AssemblaObject):
             to_append if to_append else ''
         )
 
+
+class Component(AssemblaObject):
+    None
 
 class Milestone(AssemblaObject):
     @assembla_filter
@@ -192,6 +205,21 @@ class Ticket(AssemblaObject):
                 return filter(
                     lambda user: user['id'] == self['assigned_to_id'],
                     self.space.users()
+                )[0]
+            except IndexError:
+                pass
+
+
+    @property
+    def component(self):
+        """
+        The Component currently assigned to the Ticket
+        """
+        if self.get('component_id', None):
+            try:
+                return filter(
+                    lambda component: component['id'] == self['component_id'],
+                    self.space.components()
                 )[0]
             except IndexError:
                 pass

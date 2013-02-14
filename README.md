@@ -121,6 +121,9 @@ Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keywo
 ###Space.milestones
 Returns a list of all [Milestone](#milestone) instances inside the Space.
 Milestones can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
+###Space.components
+Returns a list of all [Component](#component) instances inside the Space.
+Tickets can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
 ###Space.users
 Returns a list of all [User](#user) instances with access to the Space.
 Users can be [filtered](#filtering-objects-with-keyword-arguments) using keyword arguments.
@@ -188,6 +191,9 @@ An instance of the [Milestone](#milestone) that the Ticket belongs to.
 ###Tickets.user
 An instance of the [User](#user) that the Ticket is assigned to.
 
+###Tickets.component
+An instance of the [Component](#component) that the Ticket is assigned to.
+
 
 User
 --------------------------------------------------
@@ -213,6 +219,13 @@ for ticket in user.tickets():
 # >>> #2 - John's second ticket
 # ...
 ```
+
+
+Component
+--------------------------------------------------
+
+See the [Ticket Component object field reference](http://api-doc.assembla.com/content/ref/ticket_components_fields.html)
+for field names and explanations.
 
 
 Event
