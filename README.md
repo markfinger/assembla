@@ -253,15 +253,6 @@ arguments:
 - `space.tickets(number=100)` will return the ticket with the number 100.
 - `space.tickets(status='New', assigned_to_id=100)` will return new tickets assigned to a user with the id 100
 
-The following methods allow for keyword filtering:
-- [API.stream](#apistream)
-- [API.spaces](#apispaces)
-- [Space.tickets](#spacetickets)
-- [Space.milestones](#spacemilestones)
-- [Space.users](#spaceusers)
-- [Milestone.tickets](#milestonetickets)
-- [User.tickets](#usertickets)
-
 
 Custom fields
 --------------------------------------------------
