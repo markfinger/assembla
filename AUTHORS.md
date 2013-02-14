@@ -1,6 +1,7 @@
 Authors
 --------------------------------------------------
 
-- [Mark Finger](http://github.com/markfinger)
-- [Venkata Ramana](http://github.com/arjunc77)
-- [Simon Johnson](http://github.com/cybersimon)
+- [Mark Finger](https://github.com/markfinger)
+- [Venkata Ramana](https://github.com/arjunc77)
+- [Simon Johnson](https://github.com/cybersimon)
+- [FredericBlain](https://github.com/FredericBlain)
