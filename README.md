@@ -64,6 +64,7 @@ methods and properties:
 - [Space](#space)
     - [tickets](#spacetickets)
     - [milestones](#spacemilestones)
+    - [components](#spacecomponents)
     - [users](#spaceusers)
 - [Milestone](#milestone)
     - [tickets](#milestonetickets)
