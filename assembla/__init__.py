@@ -166,7 +166,7 @@ class Space(AssemblaObject):
 
 
 class Component(AssemblaObject):
-    None
+    pass
 
 class Milestone(AssemblaObject):
     @assembla_filter
