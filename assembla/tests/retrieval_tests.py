@@ -1,6 +1,6 @@
+from unittest import TestCase
 from assembla import API
 from assembla.tests.auth import auth
-from unittest import TestCase
 
 
 def test_instantiating_assembla_api():
