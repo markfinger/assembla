@@ -1,6 +1,9 @@
 import urllib
 import requests
 from .lib import AssemblaObject, assembla_filter
+import settings
+
+
 
 
 class API(object):
@@ -37,15 +40,19 @@ class API(object):
         return self._get_json(Space)
 
     def _get_json(self, model, rel_path=None, extra_params=None):
-
-        # Pagination for requests carrying large amounts of data
+        """
+        Base level method which does all the work of hitting the API
+        """
         if not extra_params:
             extra_params = {}
+
+        # Handle pagination for requests carrying large amounts of data
         extra_params['page'] = extra_params.get('page', 1)
 
         # Generate the url to hit
-        url = 'https://api.assembla.com/{0}/{1}.json?{2}'.format(
-            'v1', # API version
+        url = '{0}/{1}/{2}.json?{3}'.format(
+            settings.API_ROOT_PATH,
+            settings.API_VERSION,
             rel_path or model.rel_path,
             urllib.urlencode(extra_params),
         )
@@ -99,10 +106,12 @@ class API(object):
         """
         instance.api = self
         if instance.get('space_id', None):
-            instance.space = filter(
+            spaces = filter(
                 lambda space: space['id'] == instance['space_id'],
                 self.spaces()
-            )[0]
+            )
+            if spaces:
+                instance.space = spaces[0]
         return instance
 
 
@@ -158,6 +167,9 @@ class Space(AssemblaObject):
         )
 
     def _build_rel_path(self, to_append=None):
+        """
+        Build a relative path to the API endpoint
+        """
         return '{0}/{1}/{2}'.format(
             self.rel_path,
             self['id'],
@@ -187,13 +199,12 @@ class Ticket(AssemblaObject):
         The Milestone that the Ticket is a part of
         """
         if self.get('milestone_id', None):
-            try:
-                return filter(
-                    lambda milestone: milestone['id'] == self['milestone_id'],
-                    self.space.milestones()
-                )[0]
-            except IndexError:
-                pass
+            milestones = filter(
+                lambda milestone: milestone['id'] == self['milestone_id'],
+                self.space.milestones()
+            )
+            if milestones:
+                return milestones[0]
 
     @property
     def user(self):
@@ -201,14 +212,12 @@ class Ticket(AssemblaObject):
         The User currently assigned to the Ticket
         """
         if self.get('assigned_to_id', None):
-            try:
-                return filter(
-                    lambda user: user['id'] == self['assigned_to_id'],
-                    self.space.users()
-                )[0]
-            except IndexError:
-                pass
-
+            users = filter(
+                lambda user: user['id'] == self['assigned_to_id'],
+                self.space.users()
+            )
+            if users:
+                return users[0]
 
     @property
     def component(self):
@@ -216,13 +225,12 @@ class Ticket(AssemblaObject):
         The Component currently assigned to the Ticket
         """
         if self.get('component_id', None):
-            try:
-                return filter(
-                    lambda component: component['id'] == self['component_id'],
-                    self.space.components()
-                )[0]
-            except IndexError:
-                pass
+            components = filter(
+                lambda component: component['id'] == self['component_id'],
+                self.space.components()
+            )
+            if components:
+                return components[0]
 
 
 class User(AssemblaObject):
@@ -235,6 +243,6 @@ class User(AssemblaObject):
         for space in self.api.spaces():
             tickets += filter(
                 lambda ticket: ticket.get('assigned_to_id', None) == self['id'],
-                space.tickets(),
+                space.tickets()
             )
         return tickets
