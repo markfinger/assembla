@@ -137,7 +137,7 @@ class Space(AssemblaObject):
             rel_path=self._build_rel_path('tickets'),
             extra_params={
                 'per_page': 1000,
-                'report': 0 # All tickets
+                'report': 0  # All tickets
             }
         )
 

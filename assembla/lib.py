@@ -1,5 +1,6 @@
 from functools import wraps
 
+
 class AssemblaObject(object):
     """
     Proxies getitem calls (eg: `instance['id']`) to a dictionary `instance.data['id']`.
@@ -37,10 +38,10 @@ def assembla_filter(func):
             return filter(
                 # Find the objects who have an equal number of matching attr/value
                 # combinations as `len(kwargs)`
-                lambda object: len(kwargs) == len(
+                lambda obj: len(kwargs) == len(
                     filter(
                         lambda boolean: boolean,
-                        [object.get(attr_name) == value
+                        [obj.get(attr_name) == value
                             for attr_name, value in kwargs.iteritems()]
                     )
                 ),
