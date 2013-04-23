@@ -5,19 +5,18 @@ import json
 from assembla import API, Space, Milestone, Ticket, settings
 from assembla.tests.auth import auth
 
-SPACE_NAME = 'API Test Space'
+SPACE_NAME = 'API Test Space 7500'
 
 NUMBER_OF_MILESTONES = 5
 MILESTONE_TITLE_FORMAT = 'Test Milestone #{0}'
 
-NUMBER_OF_TICKETS = 1500
+NUMBER_OF_TICKETS = 7500
 TICKET_SUMMARY_FORMAT = 'Test Ticket #{0}'
 
 assembla = API(
     key=auth[0],
     secret=auth[1],
 )
-assembla.cache_responses = True
 
 class TestDataBuilder(object):
     """
@@ -34,16 +33,11 @@ class TestDataBuilder(object):
         if data:
             data = json.dumps(data)
 
+        # Try not to hammer the API too much
+        sleep(2)
+
         # Fetch the data
-        response = requests.post(
-            url=url,
-            headers={
-                'Content-type': 'application/json',
-                'X-Api-Key': auth[0],
-                'X-Api-Secret': auth[1],
-            },
-            data=data
-        )
+        response = requests.post(url=url,headers={'Content-type': 'application/json','X-Api-Key': auth[0],'X-Api-Secret': auth[1],},data=data)
 
         if response.status_code != 201:
             import pdb; pdb.set_trace()
@@ -51,23 +45,26 @@ class TestDataBuilder(object):
         return response
 
     def _create_space(self):
-        if not self._get_space():
+        self.space = self._get_space()
+        if not self.space:
+            print 'Creating space: "{0}"'.format(SPACE_NAME)
             self._post_json(Space, data={
                 'space': {
                     'name': SPACE_NAME
                 }
             })
-
-        self.space = self._get_space()
+            self.space = self._get_space()
 
         # TODO: add Space Tools to the models
 
+        print 'Creating ticket space tool'
         # Add the ticket tool
         self._post_json(
             Space,
             rel_path=self.space._build_rel_path('space_tools/13/add')
         )
 
+        print 'Creating milestone space tool'
         # Add the milestone tool
         self._post_json(
             Space,
@@ -83,6 +80,7 @@ class TestDataBuilder(object):
         milestones = self.space.milestones()
         if len(milestones) < NUMBER_OF_MILESTONES:
             for i in xrange(len(milestones) + 1, NUMBER_OF_MILESTONES + 1):
+                print 'Creating milestone: "{0}"'.format(MILESTONE_TITLE_FORMAT.format(i))
                 self._post_json(
                     Milestone,
                     rel_path=self.space._build_rel_path('milestones'),
@@ -92,9 +90,9 @@ class TestDataBuilder(object):
                         }
                     }
                 )
+        self.milestones = self.space.milestones()
 
     def _create_tickets(self):
-
         tickets = self.space.tickets()
 
         if len(tickets) < NUMBER_OF_TICKETS:
@@ -108,9 +106,7 @@ class TestDataBuilder(object):
             print "Creating {0} tickets...\n".format(end - start)
             for i in xrange(start, end):
                 # Assign the ticket to a random milestone
-                milestone = choice(self.space.milestones())
-                # Try not to hammer the API too much
-                sleep(5)
+                milestone = choice(self.milestones)
                 self._post_json(
                     Ticket,
                     rel_path=self.space._build_rel_path('tickets'),

@@ -1,9 +1,7 @@
 import urllib
 import requests
-from .lib import AssemblaObject, assembla_filter
+from assembla.lib import AssemblaObject, assembla_filter
 import settings
-
-
 
 
 class API(object):
@@ -39,10 +37,19 @@ class API(object):
         """
         return self._get_json(Space)
 
-    def _get_json(self, model, rel_path=None, extra_params=None):
+    def _get_json(self, model, space=None, rel_path=None, extra_params=None):
         """
         Base level method which does all the work of hitting the API
         """
+
+        # Only API.spaces and API.event should not provide
+        # the `space argument
+        if space is None and model not in (Space, Event):
+            raise Exception(
+                'In general, `API._get_json` should always '
+                'be called with a `space` argument.'
+            )
+
         if not extra_params:
             extra_params = {}
 
@@ -73,12 +80,14 @@ class API(object):
             if self.cache_responses:
                 self.cache[url] = response
 
-        if response.status_code == 200: # OK
-            results = [
-                self._bind_variables(
-                    model(data=json, api=self)
-                ) for json in response.json()
-            ]
+        if response.status_code == 200:  # OK
+            results = []
+            for json in response.json():
+                instance=model(data=json)
+                instance.api = self
+                if space:
+                    instance.space = space
+                results.append(instance)
             # If the number of results is divisible by the maximum limit per
             # page, then we need to fetch the next page
             per_page = extra_params.get('per_page', None)
@@ -88,11 +97,11 @@ class API(object):
                 and per_page % len(results) == 0
             ):
                 extra_params['page'] = extra_params['page'] + 1
-                results = results + self._get_json(model, rel_path, extra_params)
+                results = results + self._get_json(model, space, rel_path, extra_params)
             return results
-        elif response.status_code == 204: # No Content
+        elif response.status_code == 204:  # No Content
             return []
-        else: # Most likely a 404 Not Found
+        else:  # Most likely a 404 Not Found
             raise Exception(
                 'Code {0} returned from `{1}`.'.format(
                     response.status_code,
@@ -100,18 +109,13 @@ class API(object):
                 )
             )
 
-    def _bind_variables(self, instance):
+    def _bind_variables(self, instance, space):
         """
         Bind related variables to the instance
         """
         instance.api = self
-        if instance.get('space_id', None):
-            spaces = filter(
-                lambda space: space['id'] == instance['space_id'],
-                self.spaces()
-            )
-            if spaces:
-                instance.space = spaces[0]
+        if space:
+            instance.space = space
         return instance
 
 
@@ -129,6 +133,7 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             Ticket,
+            space=self,
             rel_path=self._build_rel_path('tickets'),
             extra_params={
                 'per_page': 1000,
@@ -143,6 +148,7 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             Milestone,
+            space=self,
             rel_path=self._build_rel_path('milestones/all'),
         )
 
@@ -153,6 +159,7 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             Component,
+            space=self,
             rel_path=self._build_rel_path('ticket_components'),
         )
 
@@ -163,6 +170,7 @@ class Space(AssemblaObject):
         """
         return self.api._get_json(
             User,
+            space=self,
             rel_path=self._build_rel_path('users'),
         )
 

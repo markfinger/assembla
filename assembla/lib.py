@@ -4,9 +4,8 @@ class AssemblaObject(object):
     """
     Proxies getitem calls (eg: `instance['id']`) to a dictionary `instance.data['id']`.
     """
-    def __init__(self, data, api):
+    def __init__(self, data):
         self.data = data
-        self.api = api
 
     def __getitem__(self, key):
         return self.data[key]
