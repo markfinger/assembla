@@ -1,9 +1,10 @@
 from time import sleep
 from random import choice
-import requests
 import json
+import requests
 from assembla import API, Space, Milestone, Ticket, settings
 from assembla.tests.auth import auth
+
 
 SPACE_NAME = 'API Test Space 7500'
 
@@ -17,6 +18,7 @@ assembla = API(
     key=auth[0],
     secret=auth[1],
 )
+
 
 class TestDataBuilder(object):
     """
@@ -34,7 +36,7 @@ class TestDataBuilder(object):
             data = json.dumps(data)
 
         # Try not to hammer the API too much
-        sleep(2)
+        sleep(5)
 
         # Fetch the data
         response = requests.post(url=url,headers={'Content-type': 'application/json','X-Api-Key': auth[0],'X-Api-Secret': auth[1],},data=data)

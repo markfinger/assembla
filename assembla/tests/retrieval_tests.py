@@ -41,7 +41,10 @@ class TestAssembla(TestCase):
         ):
             self.assertIn(key, ticket.keys())
             # Some of the fields may have been returned with null-esque values
-            if key not in ('completed_date','component_id', 'assigned_to_id',):
+            if key not in (
+                'completed_date','component_id', 'assigned_to_id',
+                'description',
+            ):
                 self.assertIsNotNone(ticket[key])
 
     def __space_with_tickets(self, cutoff=1):
@@ -93,7 +96,7 @@ class TestAssembla(TestCase):
                 if key not in (
                     'tabs_order', 'parent_id', 'restricted_date', 'banner_link',
                     'last_payer_changed_at', 'banner', 'banner_height', 'banner_text',
-                    'banner_link', 'style'
+                    'banner_link', 'style', 'description', 'commercial_from',
                 ):
                     self.assertIsNotNone(space[key])
 
@@ -129,13 +132,16 @@ class TestAssembla(TestCase):
         milestone = self.__milestone_with_tickets()
         for key in (
             'id', 'due_date', 'title', 'user_id', 'created_at', 'created_by',
-            'space_id', 'description', 'is_completed', 'completed_date',
+            'space_id', 'is_completed', 'completed_date',
             'updated_at', 'updated_by', 'release_level', 'release_notes',
             'planner_type', 'pretty_release_level',
         ):
             self.assertIn(key, milestone.keys())
             # Some of the fields may have been returned with null-esque values
-            if key not in ('completed_date', 'release_level', 'release_notes',):
+            if key not in (
+                'completed_date', 'release_level', 'release_notes', 'due_date',
+                'user_id', 'description',
+            ):
                 self.assertIsNotNone(milestone[key])
         self.assertIsNotNone(milestone.space)
         self.assertEqual(milestone.api, self.assembla)
@@ -143,10 +149,7 @@ class TestAssembla(TestCase):
     def test_space_users(self):
         for space in self.assembla.spaces():
             for user in space.users():
-                for key in (
-                    'id', 'login', 'name', 'email', 'organization', 'organization',
-                    'im', 'im2'
-                ):
+                for key in ('id', 'login', 'name'):
                     self.assertIn(key, user.keys())
                 self.assertEqual(user.api, self.assembla)
                 # Exit once we've hit a space with tickets
