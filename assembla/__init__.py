@@ -104,9 +104,10 @@ class API(object):
             return []
         else:  # Most likely a 404 Not Found
             raise Exception(
-                'Code {0} returned from `{1}`.'.format(
+                'Code {0} returned from `{1}`. Response text: "{2}".'.format(
                     response.status_code,
                     url,
+                    response.text
                 )
             )
 
