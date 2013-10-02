@@ -71,6 +71,10 @@ methods and properties:
 - [Ticket](#ticket)
     - [milestone](#ticketmilestone)
     - [user](#ticketuser)
+    - [component](#ticketcomponent)
+    - [write](#ticketwrite)
+    - [delete](#ticketdelete)
+	
 - [User](#user)
     - [tickets](#usertickets)
 - [Event](#event)
@@ -189,14 +193,29 @@ for field names and explanations.
 
 Ticket instances possess the following properties:
 
-###Tickets.milestone
+###Ticket.milestone
 An instance of the [Milestone](#milestone) that the Ticket belongs to.
 
-###Tickets.user
+###Ticket.user
 An instance of the [User](#user) that the Ticket is assigned to.
 
-###Tickets.component
+###Ticket.component
 An instance of the [Component](#component) that the Ticket is assigned to.
+
+###Ticket.write()
+Calling Ticket.write() sends the ticket back to Assembla. The ticket object must have a `space` attribute
+set to the corresponding [Space](#space) object.
+
+If the Ticket object has a 'number' key (i.e. if it already exists), the corresponding Ticket on Assembla is _updated_ 
+(using an HTTP PUT request), otherwise a new ticket is _created_ in the space (using HTTP POST).
+
+`Ticket.write()` returns the instance of the ticket. If a new ticket was created, the returned instance will have the `number`, `id`, and other
+server-generated fields populated.
+
+###Ticket.delete()
+Calling Ticket.delete() deletes the ticket from Assembla. The ticket object must have a `space` attribute
+set to the corresponding [Space](#space) object.
+
 
 
 User
