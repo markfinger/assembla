@@ -72,9 +72,8 @@ methods and properties:
     - [milestone](#ticketmilestone)
     - [user](#ticketuser)
     - [component](#ticketcomponent)
-    - [write](#ticketwrite)
-    - [delete](#ticketdelete)
-	
+    - [write()](#ticketwrite)
+    - [delete()](#ticketdelete)
 - [User](#user)
     - [tickets](#usertickets)
 - [Event](#event)
