@@ -11,6 +11,9 @@ class AssemblaObject(object):
     def __getitem__(self, key):
         return self.data[key]
 
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
     def keys(self):
         return self.data.keys()
 
@@ -19,6 +22,15 @@ class AssemblaObject(object):
 
     def get(self, *args, **kwargs):
         return self.data.get(*args, **kwargs)
+
+    def __repr__(self):
+        if 'name' in self.data:
+            return "<%s: %s>" % (type(self).__name__, self.data['name'])
+
+        if ('number' in self.data) and ('summary' in self.data):
+            return "<%s: #%s - %s>" % (type(self).__name__, self.data['number'], self.data['summary'])
+
+        return super(AssemblaObject, self).__repr__()
 
 
 def assembla_filter(func):
