@@ -59,15 +59,15 @@ the objects retrieved from Assembla, some of which possess the following
 methods and properties:
 
 - [API](#api)
-    - [stream](#apistream)
-    - [spaces](#apispaces)
+    - [stream()](#apistream)
+    - [spaces()](#apispaces)
 - [Space](#space)
-    - [tickets](#spacetickets)
-    - [milestones](#spacemilestones)
-    - [components](#spacecomponents)
-    - [users](#spaceusers)
+    - [tickets()](#spacetickets)
+    - [milestones()](#spacemilestones)
+    - [components()](#spacecomponents)
+    - [users()](#spaceusers)
 - [Milestone](#milestone)
-    - [tickets](#milestonetickets)
+    - [tickets()](#milestonetickets)
 - [Ticket](#ticket)
     - [milestone](#ticketmilestone)
     - [user](#ticketuser)
@@ -75,7 +75,7 @@ methods and properties:
     - [write()](#ticketwrite)
     - [delete()](#ticketdelete)
 - [User](#user)
-    - [tickets](#usertickets)
+    - [tickets()](#usertickets)
 - [Event](#event)
 
 
@@ -88,13 +88,13 @@ with authentication details (available from
 https://www.assembla.com/user/edit/manage_clients) and offer two methods
 of navigating Assembla's data:
 
-###API.stream
+###API.stream()
 Returns a list of [Event](#event) instances indicating the
 activity stream you have access to. Keyword arguments can be provided
 to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 
-###API.spaces
+###API.spaces()
 Returns a list of [Space](#space) instances which represent
 all the spaces that you have access to. Keyword arguments can be provided
 to [filter](#filtering-objects-with-keyword-arguments) the results.
@@ -122,16 +122,16 @@ for field names and explanations.
 
 Spaces possess the following methods:
 
-###Space.tickets
+###Space.tickets()
 Returns a list of all [Ticket](#ticket) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
-###Space.milestones
+###Space.milestones()
 Returns a list of all [Milestone](#milestone) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
-###Space.components
+###Space.components()
 Returns a list of all [Component](#component) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
-###Space.users
+###Space.users()
 Returns a list of all [User](#user) instances with access to the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
@@ -166,7 +166,7 @@ for field names and explanations.
 
 Milestone instances possess the following method:
 
-###Milestone.tickets
+###Milestone.tickets()
 Returns a list of all [Ticket](#ticket) instances which are connected to the Milestone.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
@@ -225,7 +225,7 @@ for field names and explanations.
 
 User instances possess the following method:
 
-###User.tickets
+###User.tickets()
 Returns a list of all [Ticket](#ticket) instances which are assigned to the User.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
