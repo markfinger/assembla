@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 from assembla import API
 from assembla.tests.auth import auth
 
@@ -22,7 +22,7 @@ def test_assembla_auth_details_used_for_testing():
         len(auth) == 2
     )
 
-class TestAssembla(TestCase):
+class TestAssembla(unittest.TestCase):
 
     assembla = API(
         key=auth[0],
@@ -43,20 +43,31 @@ class TestAssembla(TestCase):
             # Some of the fields may have been returned with null-esque values
             if key not in (
                 'completed_date','component_id', 'assigned_to_id',
-                'description',
+                'description', 'milestone_id'
             ):
-                self.assertIsNotNone(ticket[key])
+                try:
+                    self.assertIsNotNone(ticket[key])
+                except AssertionError:
+                    print key, "is None in"
+                    print ticket.data
+                    raise
 
-    def __space_with_tickets(self, cutoff=1):
+    def __space_with_tickets(self, cutoff=1, skip=0):
+        s = 0
         for space in self.assembla.spaces():
-            if len(space.tickets()) > cutoff:
+            if s >= skip and len(space.tickets()) > cutoff:
                 return space
+            s = s + 1
+        raise ValueError("No spaces had tickets")
 
-    def __milestone_with_tickets(self, cutoff=1):
-        space = self.__space_with_tickets()
+    def __milestone_with_tickets(self, cutoff=1, skip=0):
+        space = self.__space_with_tickets(cutoff=cutoff, skip=skip)
         for milestone in space.milestones():
             if len(milestone.tickets()) > cutoff:
                 return milestone
+        #reached when a space with tickets doesn't have milestones with tickets.
+        return self.__milestone_with_tickets(cutoff, skip=skip+1)
+
 
     def test_api_methods_exist(self):
         attrs = ('spaces', 'stream',)
@@ -213,3 +224,6 @@ class TestAssembla(TestCase):
         space = self.__space_with_tickets(1000)
         ids = [t['id'] for t in space.tickets()]
         self.assertItemsEqual(ids, list(set(ids)))
+
+if __name__ == '__main__':
+    unittest.main()
