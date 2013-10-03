@@ -59,20 +59,23 @@ the objects retrieved from Assembla, some of which possess the following
 methods and properties:
 
 - [API](#api)
-    - [stream](#apistream)
-    - [spaces](#apispaces)
+    - [stream()](#apistream)
+    - [spaces()](#apispaces)
 - [Space](#space)
-    - [tickets](#spacetickets)
-    - [milestones](#spacemilestones)
-    - [components](#spacecomponents)
-    - [users](#spaceusers)
+    - [tickets()](#spacetickets)
+    - [milestones()](#spacemilestones)
+    - [components()](#spacecomponents)
+    - [users()](#spaceusers)
 - [Milestone](#milestone)
-    - [tickets](#milestonetickets)
+    - [tickets()](#milestonetickets)
 - [Ticket](#ticket)
     - [milestone](#ticketmilestone)
     - [user](#ticketuser)
+    - [component](#ticketcomponent)
+    - [write()](#ticketwrite)
+    - [delete()](#ticketdelete)
 - [User](#user)
-    - [tickets](#usertickets)
+    - [tickets()](#usertickets)
 - [Event](#event)
 
 
@@ -85,13 +88,13 @@ with authentication details (available from
 https://www.assembla.com/user/edit/manage_clients) and offer two methods
 of navigating Assembla's data:
 
-###API.stream
+###API.stream()
 Returns a list of [Event](#event) instances indicating the
 activity stream you have access to. Keyword arguments can be provided
 to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 
-###API.spaces
+###API.spaces()
 Returns a list of [Space](#space) instances which represent
 all the spaces that you have access to. Keyword arguments can be provided
 to [filter](#filtering-objects-with-keyword-arguments) the results.
@@ -119,16 +122,16 @@ for field names and explanations.
 
 Spaces possess the following methods:
 
-###Space.tickets
+###Space.tickets()
 Returns a list of all [Ticket](#ticket) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
-###Space.milestones
+###Space.milestones()
 Returns a list of all [Milestone](#milestone) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
-###Space.components
+###Space.components()
 Returns a list of all [Component](#component) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
-###Space.users
+###Space.users()
 Returns a list of all [User](#user) instances with access to the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
@@ -163,7 +166,7 @@ for field names and explanations.
 
 Milestone instances possess the following method:
 
-###Milestone.tickets
+###Milestone.tickets()
 Returns a list of all [Ticket](#ticket) instances which are connected to the Milestone.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
@@ -189,14 +192,29 @@ for field names and explanations.
 
 Ticket instances possess the following properties:
 
-###Tickets.milestone
+###Ticket.milestone
 An instance of the [Milestone](#milestone) that the Ticket belongs to.
 
-###Tickets.user
+###Ticket.user
 An instance of the [User](#user) that the Ticket is assigned to.
 
-###Tickets.component
+###Ticket.component
 An instance of the [Component](#component) that the Ticket is assigned to.
+
+###Ticket.write()
+Calling Ticket.write() sends the ticket back to Assembla. The ticket object must have a `space` attribute
+set to the corresponding [Space](#space) object.
+
+If the Ticket object has a 'number' key (i.e. if it already exists), the corresponding Ticket on Assembla is _updated_ 
+(using an HTTP PUT request), otherwise a new ticket is _created_ in the space (using HTTP POST).
+
+`Ticket.write()` returns the instance of the ticket. If a new ticket was created, the returned instance will have the `number`, `id`, and other
+server-generated fields populated.
+
+###Ticket.delete()
+Calling Ticket.delete() deletes the ticket from Assembla. The ticket object must have a `space` attribute
+set to the corresponding [Space](#space) object.
+
 
 
 User
@@ -207,7 +225,7 @@ for field names and explanations.
 
 User instances possess the following method:
 
-###User.tickets
+###User.tickets()
 Returns a list of all [Ticket](#ticket) instances which are assigned to the User.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
