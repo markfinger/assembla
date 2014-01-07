@@ -4,7 +4,9 @@ import json
 from assembla.lib import AssemblaObject, assembla_filter
 import settings
 
-__VERSION__ = '2.1.1'
+
+__VERSION__ = '2.2.0'
+
 
 class API(object):
     cache_responses = False
