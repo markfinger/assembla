@@ -183,7 +183,6 @@ class TestAssembla(unittest.TestCase):
                     self.__check_ticket_is_valid(ticket)
                     self.assertEqual(ticket['assigned_to_id'], user['id'])
                     self.assertEqual(ticket.user['id'], user['id'])
-                    self.assertEqual(ticket.space['id'], space['id'])
                     self.assertEqual(ticket.api, self.assembla)
                     # Exit once we've hit a user with tickets
                     return
