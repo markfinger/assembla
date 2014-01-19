@@ -38,7 +38,7 @@ class API(object):
         """
         return self._get_json(Space, extra_params=extra_params)
 
-    def _get_json(self, model, space=None, rel_path=None, extra_params=None):
+    def _get_json(self, model, space=None, rel_path=None, extra_params=None, get_all=None):
         """
         Base level method which does all the work of hitting the API
         """
@@ -89,16 +89,17 @@ class API(object):
                 if space:
                     instance.space = space
                 results.append(instance)
-            # If the number of results is divisible by the maximum limit per
-            # page, then we need to fetch the next page
+            # If `get_all` is True and the length of the current page is divisible by
+            # the maximum limit per page, then we try to fetch the next page
             per_page = extra_params.get('per_page', None)
             if (
-                per_page
+                get_all
+                and per_page
                 and len(results)
                 and per_page % len(results) == 0
             ):
                 extra_params['page'] = extra_params['page'] + 1
-                results = results + self._get_json(model, space, rel_path, extra_params)
+                results = results + self._get_json(model, space, rel_path, extra_params, get_all=get_all)
             return results
         elif response.status_code == 204:  # No Content
             return []
@@ -307,6 +308,7 @@ class Space(AssemblaObject):
             space=self,
             rel_path=self._build_rel_path('tickets'),
             extra_params=params,
+            get_all=True,  # Retrieve all tickets in the space
         )
 
     @assembla_filter
