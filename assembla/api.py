@@ -40,9 +40,8 @@ class API(object):
 
     def _get_json(self, model, space=None, rel_path=None, extra_params=None, get_all=None):
         """
-        Base level method which does all the work of hitting the API
+        Base level method for fetching data from the API
         """
-
         # Only API.spaces and API.event should not provide
         # the `space argument
         if space is None and model not in (Space, Event):
@@ -114,7 +113,7 @@ class API(object):
 
     def _post_json(self, instance, space=None, rel_path=None, extra_params=None):
         """
-        Base level method which does all the work of hitting the API
+        Base level method for updating data via the API
         """
 
         model = type(instance)
@@ -172,7 +171,7 @@ class API(object):
 
     def _delete_json(self, instance, space=None, rel_path=None, extra_params=None):
         """
-        Base level method which does all the work of hitting the API
+        Base level method for removing data from the API
         """
 
         model = type(instance)
@@ -225,7 +224,7 @@ class API(object):
 
     def _put_json(self, instance, space=None, rel_path=None, extra_params=None):
         """
-        Base level method which does all the work of hitting the API
+        Base level method for adding new data to the API
         """
 
         model = type(instance)
@@ -298,8 +297,9 @@ class Space(AssemblaObject):
         # Default params
         params = {
             'per_page': 1000,
-            'report': 0  # All tickets
+            'report': 0,  # Report 0 is all tickets
         }
+
         if extra_params:
             params.update(extra_params)
 
@@ -361,6 +361,7 @@ class Space(AssemblaObject):
 class Component(AssemblaObject):
     pass
 
+
 class Milestone(AssemblaObject):
     @assembla_filter
     def tickets(self, extra_params=None):
@@ -380,10 +381,7 @@ class Ticket(AssemblaObject):
         The Milestone that the Ticket is a part of
         """
         if self.get('milestone_id', None):
-            milestones = filter(
-                lambda milestone: milestone['id'] == self['milestone_id'],
-                self.space.milestones(extra_params=extra_params)
-            )
+            milestones = self.space.milestones(id=self['milestone_id'], extra_params=extra_params)
             if milestones:
                 return milestones[0]
 
@@ -393,9 +391,9 @@ class Ticket(AssemblaObject):
         The User currently assigned to the Ticket
         """
         if self.get('assigned_to_id', None):
-            users = filter(
-                lambda user: user['id'] == self['assigned_to_id'],
-                self.space.users(extra_params=extra_params)
+            users = self.space.users(
+                id=self['assigned_to_id'],
+                extra_params=extra_params
             )
             if users:
                 return users[0]
@@ -406,26 +404,26 @@ class Ticket(AssemblaObject):
         The Component currently assigned to the Ticket
         """
         if self.get('component_id', None):
-            components = filter(
-                lambda component: component['id'] == self['component_id'],
-                self.space.components(extra_params=extra_params)
-            )
+            components = self.space.components(id=self['component_id'], extra_params=extra_params)
             if components:
                 return components[0]
 
     def write(self):
-        try:
-            self.api = self.space.api
-        except AttributeError:
+        """
+        Create or update the Ticket on Assembla
+        """
+        if not hasattr(self, 'space'):
             raise AttributeError("A ticket must have a 'space' attribute before you can write it to Assembla.")
 
-        if self.get('number'): #we are modifying an existing ticket
+        self.api = self.space.api
+
+        if self.get('number'):  # We are modifying an existing ticket
             return self.api._put_json(
                 self,
                 space=self.space,
                 rel_path=self.space._build_rel_path('tickets'),
             )
-        else: #creating a new ticketi
+        else:  # Creating a new ticket
             return self.api._post_json(
                 self,
                 space=self.space,
@@ -433,16 +431,20 @@ class Ticket(AssemblaObject):
             )
 
     def delete(self):
-        try:
-            self.api = self.space.api
-        except AttributeError:
+        """
+        Remove the Ticket from Assembla
+        """
+        if not hasattr(self, 'space'):
             raise AttributeError("A ticket must have a 'space' attribute before you can write it to Assembla.")
+
+        self.api = self.space.api
 
         return self.api._delete_json(
             self,
             space=self.space,
             rel_path=self.space._build_rel_path('tickets'),
         )
+
 
 class User(AssemblaObject):
     @assembla_filter
