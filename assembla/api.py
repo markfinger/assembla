@@ -174,6 +174,8 @@ class API(object):
         Base level method which does all the work of hitting the API
         """
 
+        model = type(instance)
+
         # Only API.spaces and API.event should not provide
         # the `space argument
         if space is None and model not in (Space, Event):
