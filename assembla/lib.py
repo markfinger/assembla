@@ -43,11 +43,16 @@ def assembla_filter(func):
     """
     @wraps(func)
     def wrapper(class_instance, **kwargs):
-        results = func(class_instance)
-        if not kwargs:
-            return results
-        else:
-            return filter(
+
+        # Get the result
+        extra_params = kwargs.get('extra_params', None)
+        if extra_params:
+            del kwargs['extra_params']
+        results = func(class_instance, extra_params)
+
+        # Filter the result
+        if kwargs:
+            results = filter(
                 # Find the objects who have an equal number of matching attr/value
                 # combinations as `len(kwargs)`
                 lambda obj: len(kwargs) == len(
@@ -59,4 +64,6 @@ def assembla_filter(func):
                 ),
                 results
             )
+
+        return results
     return wrapper

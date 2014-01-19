@@ -25,18 +25,18 @@ class API(object):
         self.secret = secret
 
     @assembla_filter
-    def stream(self):
+    def stream(self, extra_params=None):
         """
         All Events available
         """
-        return self._get_json(Event)
+        return self._get_json(Event, extra_params=extra_params)
 
     @assembla_filter
-    def spaces(self):
+    def spaces(self, extra_params=None):
         """
         All Spaces available
         """
-        return self._get_json(Space)
+        return self._get_json(Space, extra_params=extra_params)
 
     def _get_json(self, model, space=None, rel_path=None, extra_params=None):
         """
@@ -289,22 +289,28 @@ class Space(AssemblaObject):
     rel_path = 'spaces'
 
     @assembla_filter
-    def tickets(self):
+    def tickets(self, extra_params=None):
         """
         All Tickets in this Space
         """
+
+        # Default params
+        params = {
+            'per_page': 1000,
+            'report': 0  # All tickets
+        }
+        if extra_params:
+            params.update(extra_params)
+
         return self.api._get_json(
             Ticket,
             space=self,
             rel_path=self._build_rel_path('tickets'),
-            extra_params={
-                'per_page': 1000,
-                'report': 0  # All tickets
-            }
+            extra_params=params,
         )
 
     @assembla_filter
-    def milestones(self):
+    def milestones(self, extra_params=None):
         """
         All Milestones in this Space
         """
@@ -312,10 +318,11 @@ class Space(AssemblaObject):
             Milestone,
             space=self,
             rel_path=self._build_rel_path('milestones/all'),
+            extra_params=extra_params,
         )
 
     @assembla_filter
-    def components(self):
+    def components(self, extra_params=None):
         """"
         All components in this Space
         """
@@ -323,10 +330,11 @@ class Space(AssemblaObject):
             Component,
             space=self,
             rel_path=self._build_rel_path('ticket_components'),
+            extra_params=extra_params,
         )
 
     @assembla_filter
-    def users(self):
+    def users(self, extra_params=None):
         """
         All Users with access to this Space
         """
@@ -334,6 +342,7 @@ class Space(AssemblaObject):
             User,
             space=self,
             rel_path=self._build_rel_path('users'),
+            extra_params=extra_params,
         )
 
     def _build_rel_path(self, to_append=None):
@@ -352,52 +361,52 @@ class Component(AssemblaObject):
 
 class Milestone(AssemblaObject):
     @assembla_filter
-    def tickets(self):
+    def tickets(self, extra_params=None):
         """
         All Tickets which are a part of this Milestone
         """
         return filter(
             lambda ticket: ticket.get('milestone_id', None) == self['id'],
-            self.space.tickets()
+            self.space.tickets(extra_params=extra_params)
         )
 
 
 class Ticket(AssemblaObject):
     @property
-    def milestone(self):
+    def milestone(self, extra_params=None):
         """
         The Milestone that the Ticket is a part of
         """
         if self.get('milestone_id', None):
             milestones = filter(
                 lambda milestone: milestone['id'] == self['milestone_id'],
-                self.space.milestones()
+                self.space.milestones(extra_params=extra_params)
             )
             if milestones:
                 return milestones[0]
 
     @property
-    def user(self):
+    def user(self, extra_params=None):
         """
         The User currently assigned to the Ticket
         """
         if self.get('assigned_to_id', None):
             users = filter(
                 lambda user: user['id'] == self['assigned_to_id'],
-                self.space.users()
+                self.space.users(extra_params=extra_params)
             )
             if users:
                 return users[0]
 
     @property
-    def component(self):
+    def component(self, extra_params=None):
         """
         The Component currently assigned to the Ticket
         """
         if self.get('component_id', None):
             components = filter(
                 lambda component: component['id'] == self['component_id'],
-                self.space.components()
+                self.space.components(extra_params=extra_params)
             )
             if components:
                 return components[0]
@@ -435,7 +444,7 @@ class Ticket(AssemblaObject):
 
 class User(AssemblaObject):
     @assembla_filter
-    def tickets(self):
+    def tickets(self, extra_params=None):
         """
         A User's tickets across all available spaces
         """
@@ -443,6 +452,6 @@ class User(AssemblaObject):
         for space in self.api.spaces():
             tickets += filter(
                 lambda ticket: ticket.get('assigned_to_id', None) == self['id'],
-                space.tickets()
+                space.tickets(extra_params=extra_params)
             )
         return tickets

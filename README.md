@@ -270,6 +270,19 @@ arguments:
 - `space.tickets(number=100)` will return the ticket with the number 100.
 - `space.tickets(status='New', assigned_to_id=100)` will return new tickets assigned to a user with the id 100
 
+Normal keyword filtering will only act on the data that Assembla returns. If
+you wish to take advantage of the pre-filtering that Assembla's API offers, an
+`extra_params` keyword argument can be provided. The argument should be a
+dictionary that contains extra parameters which will be passed along when
+the GET request is sent.
+
+For example, to filter Stream events from a certain period:
+```python
+assembla.stream(extra_params={
+    'from': '2014-01-19 09:20'
+})
+```
+
 
 Custom fields
 --------------------------------------------------

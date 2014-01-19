@@ -1,6 +1,8 @@
 import unittest
 from assembla import API
 from assembla.tests.auth import auth
+import datetime
+import time
 
 
 def test_instantiating_assembla_api():
@@ -223,6 +225,30 @@ class TestAssembla(unittest.TestCase):
         space = self.__space_with_tickets(1000)
         ids = [t['id'] for t in space.tickets()]
         self.assertItemsEqual(ids, list(set(ids)))
+
+    def test_extra_params_filtering(self):
+        # Find two different timestamps in the stream and filter by the later one
+        # so that we can see if the filtering by extra_params works
+
+        stream = self.assembla.stream()
+        first_time = None
+        second_time = None
+        for event in stream:
+            # Strip the time from the Event
+            time_struct = time.strptime(event.get('date'), '%Y-%m-%dT%H:%M:%S+00:00')
+            # Instantiate a datetime using only the Year, Month, Day, Hour and Minute
+            event_time = datetime.datetime(*time_struct[:5])
+
+            if not first_time:
+                first_time = event_time
+
+            if event_time < first_time:
+                second_time = event_time
+
+        filter_from = first_time.strftime('%Y-%m-%d %H:%M')
+        filtered_stream = self.assembla.stream(extra_params={"from": filter_from})
+
+        self.assertLess(len(filtered_stream), len(stream))
 
 if __name__ == '__main__':
     unittest.main()
