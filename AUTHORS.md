@@ -6,3 +6,4 @@ Authors
 - [Simon Johnson](https://github.com/cybersimon)
 - [FredericBlain](https://github.com/FredericBlain)
 - [Greg Turner](https://github.com/cogat)
+- [Gerald Kaszuba](https://github.com/gak)
