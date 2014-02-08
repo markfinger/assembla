@@ -64,6 +64,7 @@ methods and properties:
     - [tickets()](#spacetickets)
     - [milestones()](#spacemilestones)
     - [components()](#spacecomponents)
+    - [tools()](#spacetools)
     - [users()](#spaceusers)
 - [Milestone](#milestone)
     - [tickets()](#milestonetickets)
@@ -75,6 +76,11 @@ methods and properties:
     - [delete()](#ticketdelete)
 - [User](#user)
     - [tickets()](#usertickets)
+- [Component](#component)
+- [Space tool](#space-tool)
+- [Wiki Page](#wiki-page)
+    - [write()](#wikipagewrite)
+    - [delete()](#wikipagedelete)
 - [Event](#event)
 
 
