@@ -222,7 +222,8 @@ class API(object):
                 )
             )
 
-    def _put_json(self, instance, space=None, rel_path=None, extra_params=None):
+    def _put_json(self, instance, space=None, rel_path=None, extra_params=None,
+                  id_field='number'):
         """
         Base level method for adding new data to the API
         """
@@ -245,7 +246,7 @@ class API(object):
             settings.API_ROOT_PATH,
             settings.API_VERSION,
             rel_path or model.rel_path,
-            instance['number'],
+            instance[id_field],
             urllib.urlencode(extra_params),
         )
 
@@ -344,6 +345,18 @@ class Space(AssemblaObject):
             User,
             space=self,
             rel_path=self._build_rel_path('users'),
+            extra_params=extra_params,
+            )
+
+    @assembla_filter
+    def wiki_pages(self, extra_params=None):
+        """
+        All Wiki Pages with access to this Space
+        """
+        return self.api._get_json(
+            WikiPage,
+            space=self,
+            rel_path=self._build_rel_path('wiki_pages'),
             extra_params=extra_params,
         )
 
@@ -459,3 +472,29 @@ class User(AssemblaObject):
                 space.tickets(extra_params=extra_params)
             )
         return tickets
+
+
+class WikiPage(AssemblaObject):
+    def write(self):
+        """
+        Create or update a Wiki Page on Assembla
+        """
+        if not hasattr(self, 'space'):
+            raise AttributeError("A ticket must have a 'space' attribute before you can write it to Assembla.")
+
+        self.api = self.space.api
+
+        if self.get('id'):  # We are modifying an existing wiki page
+            return self.api._put_json(
+                self,
+                space=self.space,
+                rel_path=self.space._build_rel_path('wiki_pages'),
+                id_field='id'
+            )
+        else:  # Creating a new wiki page
+            return self.api._post_json(
+                self,
+                space=self.space,
+                rel_path=self.space._build_rel_path('wiki_pages'),
+            )
+
