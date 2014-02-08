@@ -250,5 +250,23 @@ class TestAssembla(unittest.TestCase):
 
         self.assertLess(len(filtered_stream), len(stream))
 
+    def test_space_tools(self):
+        self.assertTrue(
+            len(self.assembla.spaces()[0].tools()) > 0
+        )
+
+    def _get_space_with_wiki_tools(self):
+        for space in self.assembla.spaces():
+            for tool in space.tools():
+                if 'wiki' in tool['menu_name'].lower():
+                    return space
+        raise Exception('Can\'t find a space with the Wiki tool')
+
+    def test_space_wiki_pages(self):
+        space = self._get_space_with_wiki_tools()
+        for page in space.wiki_pages():
+            self.assertTrue(page['page_name'])
+            self.assertTrue(page['contents'])
+
 if __name__ == '__main__':
     unittest.main()

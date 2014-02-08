@@ -24,8 +24,9 @@ class AssemblaObject(object):
         return self.data.get(*args, **kwargs)
 
     def __repr__(self):
-        if 'name' in self.data:
-            return "<%s: %s>" % (type(self).__name__, self.data['name'])
+        for field in ('menu_name', 'page_name', 'name',):
+            if field in self.data:
+                return '<%s: %s>' % (type(self).__name__, self.data[field])
 
         if ('number' in self.data) and ('summary' in self.data):
             return "<%s: #%s - %s>" % (type(self).__name__, self.data['number'], self.data['summary'])

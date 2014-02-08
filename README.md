@@ -130,6 +130,9 @@ Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-ar
 ###Space.components()
 Returns a list of all [Component](#component) instances inside the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
+###Space.tools()
+Returns a list of all [SpaceTool](#space-tool) instances inside the Space.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 ###Space.users()
 Returns a list of all [User](#user) instances with access to the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
@@ -247,6 +250,36 @@ Component
 
 See the [Ticket Component object field reference](http://api-doc.assembla.com/content/ref/ticket_components_fields.html)
 for field names and explanations.
+
+Space tool
+--------------------------------------------------
+
+See the [Space tool object field reference](http://api-doc.assembla.com/content/ref/space_tool_fields.html)
+for field names and explanations.
+
+
+Wiki Page
+--------------------------------------------------
+
+See the [Wiki Page object field reference](http://api-doc.assembla.com/content/ref/wiki_page_fields.html)
+for field names and explanations.
+
+Wiki Page instances possess the following properties:
+
+###WikiPage.write()
+Calling WikiPage.write() sends the page back to Assembla. The WikiPage object must have a `space` attribute
+set to the corresponding [Space](#space) object.
+
+If the WikiPage object has a 'id' key (i.e. if it already exists), the corresponding WikiPage on Assembla is _updated_
+(using an HTTP PUT request), otherwise a new ticket is _created_ in the space (using HTTP POST).
+
+`WikiPage.write()` returns the instance of the ticket. If a new ticket was created, the returned instance will have the
+`id` and other server-generated fields populated.
+
+###WikiPage.delete()
+Calling WikiPage.delete() deletes the ticket from Assembla. The WikiPage object must have a `space` attribute
+set to the corresponding [Space](#space) object.
+
 
 
 Event
