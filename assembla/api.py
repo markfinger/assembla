@@ -325,11 +325,21 @@ class Space(AssemblaObject):
         """
         All Milestones in this Space
         """
+        
+        # Default params
+        params = {
+            'per_page': 1000,
+        }
+
+        if extra_params:
+            params.update(extra_params)
+            
         return self.api._get_json(
             Milestone,
             space=self,
             rel_path=self._build_rel_path('milestones/all'),
-            extra_params=extra_params,
+            extra_params=params,
+            get_all=True,  # Retrieve all milestones in the space
         )
 
     @assembla_filter
