@@ -1,6 +1,5 @@
 import os
 from setuptools import setup, find_packages
-import assembla
 
 
 PYPI_RESTRUCTURED_TEXT_INFO = \
@@ -32,7 +31,7 @@ Full documentation at http://github.com/markfinger/assembla
 
 setup(
     name = 'assembla',
-    version = assembla.__VERSION__,
+    version = '2.4.1',
     packages = find_packages(),
 
     install_requires = [
