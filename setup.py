@@ -35,7 +35,7 @@ setup(
     packages = find_packages(),
 
     install_requires = [
-        'requests==1.0.4',
+        'requests',
     ],
     package_data = {'assembla': []},
     entry_points = {},
@@ -56,5 +56,9 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
     ],
+    use_2to3 = True,
 )
