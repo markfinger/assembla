@@ -82,21 +82,23 @@ class API(object):
 
         if response.status_code == 200:  # OK
             results = []
-            for json in response.json():
+            json_response = response.json()
+            for json in json_response:
                 instance=model(data=json)
                 instance.api = self
                 if space:
                     instance.space = space
                 results.append(instance)
-            # If `get_all` is True and the length of the current page is divisible by
-            # the maximum limit per page, then we try to fetch the next page
+            # If it looks like there are more pages to fetch,
+            # try and fetch the next one
             per_page = extra_params.get('per_page', None)
             if (
                 get_all
                 and per_page
-                and len(results)
-                and per_page % len(results) == 0
+                and len(json_response)
+                and per_page == len(json_response)
             ):
+                import pdb; pdb.set_trace()
                 extra_params['page'] = extra_params['page'] + 1
                 results = results + self._get_json(model, space, rel_path, extra_params, get_all=get_all)
             return results
@@ -305,7 +307,7 @@ class Space(AssemblaObject):
 
         # Default params
         params = {
-            'per_page': 1000,
+            'per_page': settings.MAX_PER_PAGE,
             'report': 0,  # Report 0 is all tickets
         }
 
@@ -328,7 +330,7 @@ class Space(AssemblaObject):
         
         # Default params
         params = {
-            'per_page': 1000,
+            'per_page': settings.MAX_PER_PAGE,
         }
 
         if extra_params:
