@@ -23,6 +23,7 @@ class API(object):
             )
         self.key = key
         self.secret = secret
+        self.session = requests.Session()
 
     @assembla_filter
     def stream(self, extra_params=None):
@@ -69,13 +70,11 @@ class API(object):
             response = self.cache[url]
         else:
             # Fetch the data
-            response = requests.get(
-                url=url,
-                headers={
-                    'X-Api-Key': self.key,
-                    'X-Api-Secret': self.secret,
-                },
-            )
+            headers = {
+                'X-Api-Key': self.key,
+                'X-Api-Secret': self.secret,
+            }
+            response = self.session.get(url=url, headers=headers)
             # If the cache is being used, update it
             if self.cache_responses:
                 self.cache[url] = response
