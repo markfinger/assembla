@@ -177,7 +177,6 @@ class TestAssembla(unittest.TestCase):
         self.assertIsNotNone(ticket.space)
         self.assertEqual(ticket.api, self.assembla)
 
-
     def test_user_tickets(self):
         for space in self.assembla.spaces():
             for user in space.users():

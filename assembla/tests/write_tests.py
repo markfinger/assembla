@@ -45,11 +45,11 @@ class TestAssembla(unittest.TestCase):
 
         ticket = ticket.write()
 
-        #ticket now has a number
+        # ticket now has a number
         self.assertTrue(ticket['number'])
         self.assertTrue(ticket['id'])
 
-        #tidy up (oh and test delete)
+        # tidy up (oh and test delete)
         ticket.delete()
 
     def _get_space_with_wiki_tools(self):

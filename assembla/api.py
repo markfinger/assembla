@@ -82,8 +82,8 @@ class API(object):
         if response.status_code == 200:  # OK
             results = []
             json_response = response.json()
-            for json in json_response:
-                instance=model(data=json)
+            for obj in json_response:
+                instance = model(data=obj)
                 instance.api = self
                 if space:
                     instance.space = space
@@ -97,8 +97,7 @@ class API(object):
                 and len(json_response)
                 and per_page == len(json_response)
             ):
-                import pdb; pdb.set_trace()
-                extra_params['page'] = extra_params['page'] + 1
+                extra_params['page'] += 1
                 results = results + self._get_json(model, space, rel_path, extra_params, get_all=get_all)
             return results
         elif response.status_code == 204:  # No Content
@@ -463,20 +462,16 @@ class Ticket(AssemblaObject):
         if not hasattr(self, 'space'):
             raise AttributeError("A ticket must have a 'space' attribute before you can write it to Assembla.")
 
-        self.api = self.space.api
-
-        if self.get('number'):  # We are modifying an existing ticket
-            return self.api._put_json(
-                self,
-                space=self.space,
-                rel_path=self.space._build_rel_path('tickets'),
-            )
+        if self.get('number'):  # Modifying an existing ticket
+            method = self.space.api._put_json
         else:  # Creating a new ticket
-            return self.api._post_json(
-                self,
-                space=self.space,
-                rel_path=self.space._build_rel_path('tickets'),
-            )
+            method = self.space.api._post_json
+
+        return method(
+            self,
+            space=self.space,
+            rel_path=self.space._build_rel_path('tickets'),
+        )
 
     def delete(self):
         """
@@ -485,9 +480,7 @@ class Ticket(AssemblaObject):
         if not hasattr(self, 'space'):
             raise AttributeError("A ticket must have a 'space' attribute before you can remove it from Assembla.")
 
-        self.api = self.space.api
-
-        return self.api._delete_json(
+        return self.space.api._delete_json(
             self,
             space=self.space,
             rel_path=self.space._build_rel_path('tickets'),
