@@ -172,8 +172,8 @@ class TestAssembla(unittest.TestCase):
         milestone = self.__milestone_with_tickets()
         ticket = milestone.tickets()[0]
         self.__check_ticket_is_valid(ticket)
-        self.assertEqual(ticket.milestone['id'], milestone['id'])
-        self.assertEqual(ticket.milestone.space['id'], milestone.space['id'])
+        self.assertEqual(ticket.milestone()['id'], milestone['id'])
+        self.assertEqual(ticket.milestone().space['id'], milestone.space['id'])
         self.assertIsNotNone(ticket.space)
         self.assertEqual(ticket.api, self.assembla)
 
