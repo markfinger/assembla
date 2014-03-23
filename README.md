@@ -69,9 +69,9 @@ methods and properties:
 - [Milestone](#milestone)
     - [tickets()](#milestonetickets)
 - [Ticket](#ticket)
-    - [milestone](#ticketmilestone)
-    - [user](#ticketuser)
-    - [component](#ticketcomponent)
+    - [milestone()](#ticketmilestone)
+    - [user()](#ticketuser)
+    - [component()](#ticketcomponent)
     - [write()](#ticketwrite)
     - [delete()](#ticketdelete)
 - [User](#user)
@@ -198,15 +198,15 @@ Ticket
 See the [Ticket object field reference](http://api-doc.assembla.com/content/ref/ticket_fields.html#fields)
 for field names and explanations.
 
-Ticket instances possess the following properties:
+Ticket instances possess the following methods:
 
-###Ticket.milestone
-An instance of the [Milestone](#milestone) that the Ticket belongs to.
+###Ticket.milestone()
+Returns an instance of the [Milestone](#milestone) that the Ticket belongs to.
 
-###Ticket.user
-An instance of the [User](#user) that the Ticket is assigned to.
+###Ticket.user()
+Returns an instance of the [User](#user) that the Ticket is assigned to.
 
-###Ticket.component
+###Ticket.component()
 An instance of the [Component](#component) that the Ticket is assigned to.
 
 ###Ticket.write()
@@ -270,7 +270,7 @@ Wiki Page
 See the [Wiki Page object field reference](http://api-doc.assembla.com/content/ref/wiki_page_fields.html)
 for field names and explanations.
 
-Wiki Page instances possess the following properties:
+Wiki Page instances possess the following methods:
 
 ###WikiPage.write()
 Calling WikiPage.write() sends the page back to Assembla. The WikiPage object must have a `space` attribute

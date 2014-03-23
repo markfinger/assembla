@@ -422,7 +422,6 @@ class Milestone(AssemblaObject):
 
 
 class Ticket(AssemblaObject):
-    @property
     def milestone(self, extra_params=None):
         """
         The Milestone that the Ticket is a part of
@@ -432,7 +431,6 @@ class Ticket(AssemblaObject):
             if milestones:
                 return milestones[0]
 
-    @property
     def user(self, extra_params=None):
         """
         The User currently assigned to the Ticket
@@ -445,7 +443,6 @@ class Ticket(AssemblaObject):
             if users:
                 return users[0]
 
-    @property
     def component(self, extra_params=None):
         """
         The Component currently assigned to the Ticket
