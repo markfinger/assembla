@@ -1,5 +1,5 @@
 # Core libs
-requests==1.0.4
+requests==2.2.1
 
 # Testing/Dev
 nose==1.2.1
