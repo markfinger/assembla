@@ -24,12 +24,18 @@ class AssemblaObject(object):
         return self.data.get(*args, **kwargs)
 
     def __repr__(self):
+        # Most objects
         for field in ('menu_name', 'page_name', 'name',):
             if field in self.data:
                 return '<%s: %s>' % (type(self).__name__, self.data[field])
 
+        # Tickets
         if ('number' in self.data) and ('summary' in self.data):
             return "<%s: #%s - %s>" % (type(self).__name__, self.data['number'], self.data['summary'])
+
+        # Ticket Comments
+        if 'id' in self.data:
+            return "<%s: #%s>" % (type(self).__name__, self.data['id'])
 
         return super(AssemblaObject, self).__repr__()
 

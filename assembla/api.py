@@ -452,6 +452,31 @@ class Ticket(AssemblaObject):
             if components:
                 return components[0]
 
+    @assembla_filter
+    def comments(self, extra_params=None):
+        """
+        All Comments in this Ticket
+        """
+
+        # Default params
+        params = {
+            'per_page': settings.MAX_PER_PAGE,
+        }
+
+        if extra_params:
+            params.update(extra_params)
+
+        return self.api._get_json(
+            TicketComment,
+            space=self,
+            rel_path=self.space._build_rel_path(
+                'tickets/%s/ticket_comments' % self['number']
+            ),
+            extra_params=params,
+            get_all=True,  # Retrieve all comments in the ticket
+        )
+
+
     def write(self):
         """
         Create or update the Ticket on Assembla
@@ -482,6 +507,10 @@ class Ticket(AssemblaObject):
             space=self.space,
             rel_path=self.space._build_rel_path('tickets'),
         )
+
+
+class TicketComment(AssemblaObject):
+    pass
 
 
 class User(AssemblaObject):

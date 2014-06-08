@@ -72,6 +72,7 @@ methods and properties:
     - [milestone()](#ticketmilestone)
     - [user()](#ticketuser)
     - [component()](#ticketcomponent)
+    - [comments()](#ticketcomments)
     - [write()](#ticketwrite)
     - [delete()](#ticketdelete)
 - [User](#user)
@@ -209,6 +210,9 @@ Returns an instance of the [User](#user) that the Ticket is assigned to.
 ###Ticket.component()
 An instance of the [Component](#component) that the Ticket is assigned to.
 
+###Ticket.comments()
+Returns a list of the [Ticket Comment](#ticket-comment) instances relating to the Ticket.
+
 ###Ticket.write()
 Calling Ticket.write() sends the ticket back to Assembla. The ticket object must have a `space` attribute
 set to the corresponding [Space](#space) object.
@@ -223,6 +227,12 @@ server-generated fields populated.
 Calling Ticket.delete() deletes the ticket from Assembla. The ticket object must have a `space` attribute
 set to the corresponding [Space](#space) object.
 
+
+Ticket Comment
+--------------------------------------------------
+
+See the [Ticket Comment object field reference](http://api-doc.assembla.com/content/ref/ticket_comments_fields.html#fields)
+for field names and explanations.
 
 
 User
