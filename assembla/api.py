@@ -379,7 +379,7 @@ class Space(AssemblaObject):
             )
 
     @assembla_filter
-    def Tags(self, extra_params=None):
+    def tags(self, extra_params=None):
         """"
         All Tags in this Space
         """
