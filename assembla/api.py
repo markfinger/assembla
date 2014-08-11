@@ -379,6 +379,19 @@ class Space(AssemblaObject):
             )
 
     @assembla_filter
+    def Tags(self, extra_params=None):
+        """"
+        All Tags in this Space
+        """
+        return self.api._get_json(
+            Tag,
+            space=self,
+            rel_path=self._build_rel_path('tags'),
+            extra_params=extra_params,
+        )
+
+    @assembla_filter
+    @assembla_filter
     def wiki_pages(self, extra_params=None):
         """
         All Wiki Pages with access to this Space
@@ -437,7 +450,7 @@ class Ticket(AssemblaObject):
             params.update(extra_params)
 
         return self.api._get_json(
-            TicketTag,
+            Tag,
             space=self,
             rel_path=self.space._build_rel_path(
                 'tickets/%s/tags' % self['number']
@@ -538,7 +551,7 @@ class TicketComment(AssemblaObject):
     pass
 
 
-class TicketTag(AssemblaObject):
+class Tag(AssemblaObject):
     pass
 
 
