@@ -422,6 +422,31 @@ class Milestone(AssemblaObject):
 
 
 class Ticket(AssemblaObject):
+
+    def tags(self, extra_params=None):
+        """
+        All Tags in this Ticket
+        """
+
+        # Default params
+        params = {
+            'per_page': settings.MAX_PER_PAGE,
+        }
+
+        if extra_params:
+            params.update(extra_params)
+
+        return self.api._get_json(
+            TicketTag,
+            space=self,
+            rel_path=self.space._build_rel_path(
+                'tickets/%s/tags' % self['number']
+            ),
+            extra_params=params,
+            get_all=True,  # Retrieve all comments in the ticket
+        )
+
+
     def milestone(self, extra_params=None):
         """
         The Milestone that the Ticket is a part of
@@ -510,6 +535,10 @@ class Ticket(AssemblaObject):
 
 
 class TicketComment(AssemblaObject):
+    pass
+
+
+class TicketTag(AssemblaObject):
     pass
 
 
