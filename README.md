@@ -1,5 +1,5 @@
 Python wrapper for the Assembla API
-===============================================================
+===================================
 
 An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 
@@ -12,7 +12,7 @@ An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 
 
 Installation
---------------------------------------------------
+------------
 
 Install assembla with pip:
 
@@ -25,7 +25,7 @@ which are accessible from https://www.assembla.com/user/edit/manage_clients.
 
 
 Basic example
---------------------------------------------------
+-------------
 
 The following example connects to Assembla, retrieves a list of tickets for a
 space and then outputs information about each.
@@ -51,7 +51,7 @@ for ticket in my_space.tickets():
 
 
 User guide
---------------------------------------------------
+----------
 
 The Assembla API wrapper uses a number of Python classes to represent
 the objects retrieved from Assembla, some of which possess the following
@@ -86,7 +86,7 @@ methods and properties:
 
 
 API
---------------------------------------------------
+---
 
 API instances are the primary facet of the Assembla API wrapper and are
 the starting point for interactions with the API. APIs are instantiated
@@ -121,7 +121,7 @@ for space in assembla.spaces():
 
 
 Space
---------------------------------------------------
+-----
 
 See the [Space object field reference](http://api-doc.assembla.com/content/ref/space_fields.html#fields)
 for field names and explanations.
@@ -168,7 +168,7 @@ for ticket in tickets:
 
 
 Milestone
---------------------------------------------------
+---------
 
 See the [Milestone object field reference](http://api-doc.assembla.com/content/ref/milestones_fields.html#fields)
 for field names and explanations.
@@ -194,7 +194,7 @@ for ticket in milestone.tickets():
 
 
 Ticket
---------------------------------------------------
+------
 
 See the [Ticket object field reference](http://api-doc.assembla.com/content/ref/ticket_fields.html#fields)
 for field names and explanations.
@@ -229,14 +229,14 @@ set to the corresponding [Space](#space) object.
 
 
 Ticket Comment
---------------------------------------------------
+--------------
 
 See the [Ticket Comment object field reference](http://api-doc.assembla.com/content/ref/ticket_comments_fields.html#fields)
 for field names and explanations.
 
 
 User
---------------------------------------------------
+----
 
 See the [User object field reference](http://api-doc.assembla.com/content/ref/user_fields.html#fields)
 for field names and explanations.
@@ -262,20 +262,21 @@ for ticket in user.tickets():
 
 
 Component
---------------------------------------------------
+---------
 
 See the [Ticket Component object field reference](http://api-doc.assembla.com/content/ref/ticket_components_fields.html)
 for field names and explanations.
 
+
 Space tool
---------------------------------------------------
+----------
 
 See the [Space tool object field reference](http://api-doc.assembla.com/content/ref/space_tool_fields.html)
 for field names and explanations.
 
 
 Wiki Page
---------------------------------------------------
+---------
 
 See the [Wiki Page object field reference](http://api-doc.assembla.com/content/ref/wiki_page_fields.html)
 for field names and explanations.
@@ -299,14 +300,14 @@ set to the corresponding [Space](#space) object.
 
 
 Event
---------------------------------------------------
+-----
 
 See the [Event object field reference](http://api-doc.assembla.com/content/ref/event_fields.html#fields)
 for field names and explanations.
 
 
 Filtering objects with keyword arguments
---------------------------------------------------
+----------------------------------------
 
 Most data retrieval methods allow for filtering of the objects based on
 the data returned by Assembla. The keyword arguments to use correlate to
@@ -334,7 +335,7 @@ assembla.stream(extra_params={
 
 
 Custom fields
---------------------------------------------------
+-------------
 
 An object's custom fields are retrieved similarly to most fields, the only difference
 is that they are nested within a dictionary named `custom_fields`.
@@ -346,7 +347,7 @@ billing_code = ticket['custom_fields']['billing_code']
 
 
 Caching
---------------------------------------------------
+-------
 
 The API wrapper has an optional response caching system which is deactivated
 by default. Turning the caching system on will reduce the overhead on repeated
@@ -365,3 +366,13 @@ assembla = API(
 
 assembla.cache_responses = True
 ```
+
+
+Colophon
+--------
+
+[List of contributors](https://github.com/markfinger/assembla/graphs/contributors) is available on Github.
+
+This project is licensed under [The MIT License (MIT)](http://opensource.org/licenses/MIT). Copyright (c) 2014, Mark Finger.
+
+For more information about the license for this particular project [read the LICENSE.md file](LICENSE.md).
