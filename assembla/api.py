@@ -391,7 +391,6 @@ class Space(AssemblaObject):
         )
 
     @assembla_filter
-    @assembla_filter
     def wiki_pages(self, extra_params=None):
         """
         All Wiki Pages with access to this Space
@@ -456,7 +455,7 @@ class Ticket(AssemblaObject):
                 'tickets/%s/tags' % self['number']
             ),
             extra_params=params,
-            get_all=True,  # Retrieve all comments in the ticket
+            get_all=True,  # Retrieve all tags in the ticket
         )
 
 
