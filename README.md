@@ -143,6 +143,9 @@ Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-ar
 ###Space.users()
 Returns a list of all [User](#user) instances with access to the Space.
 Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
+###Space.tags()
+Returns a list of all [Tag](#tag) instances inside the Space.
+Keyword arguments can be provided to [filter](#filtering-objects-with-keyword-arguments) the results.
 
 Here is an example which prints a report of all the tickets in a
 Space which have the status 'New' and belong to a milestone called 'Alpha Release':
@@ -297,6 +300,12 @@ If the WikiPage object has a 'id' key (i.e. if it already exists), the correspon
 Calling WikiPage.delete() deletes the ticket from Assembla. The WikiPage object must have a `space` attribute
 set to the corresponding [Space](#space) object.
 
+
+Tag
+---
+
+See the [Tag object field reference](http://api-doc.assembla.com/content/ref/tag_fields.html#fields)
+for field names and explanations.
 
 
 Event
