@@ -31,7 +31,7 @@ Full documentation at http://github.com/markfinger/assembla
 
 setup(
     name = 'assembla',
-    version = '2.7.0',
+    version = '2.8.0',
     packages = find_packages(),
     install_requires = [
         'requests',
