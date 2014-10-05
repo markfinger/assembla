@@ -381,7 +381,7 @@ assembla.cache_responses = True
 Colophon
 --------
 
-A [list of contributors](graphs/contributors) is available on Github.
+A [list of contributors](https://github.com/markfinger/assembla/graphs/contributors) is available on Github.
 
 This project is licensed under [The MIT License (MIT)](http://opensource.org/licenses/MIT). Copyright (c) 2014, Mark Finger.
 
