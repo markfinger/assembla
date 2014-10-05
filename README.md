@@ -9,6 +9,7 @@ An easy to use wrapper around the [Assembla API](http://api-doc.assembla.com/).
 - [Filtering objects with keyword arguments](#filtering-objects-with-keyword-arguments)
 - [Custom fields](#custom-fields)
 - [Caching](#caching)
+- [Colophon](#colophon)
 
 
 Installation
